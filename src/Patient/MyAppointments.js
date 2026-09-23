@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function MyAppointments() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [appointments, setAppointments] = useState([]);
@@ -167,17 +169,44 @@ function MyAppointments() {
         "badge badge-scheduled";
     }
 
+    const translatedStatus = {
+      Pending: t("pending"),
+      Scheduled: t("scheduled"),
+      Completed: t("completed"),
+      Cancelled: t("cancelled"),
+      Rejected: t("rejected"),
+      "No-show": t("noShow"),
+      Waiting: t("waiting"),
+      "In Progress": t("inProgress"),
+    };
+
     return (
       <span className={badgeClass}>
-        {status || "Pending"}
+        {translatedStatus[status] ||
+          status ||
+          t("pending")}
       </span>
     );
+  };
+
+  const translatedDepartment = {
+    General: t("general"),
+    Dental: t("dental"),
+    Maternal: t("maternal"),
+    "Child Health": t("childHealth"),
+    Chronic: t("chronicCare"),
+  };
+
+  const translatedPriority = {
+    Normal: t("normal"),
+    Urgent: t("urgent"),
+    Emergency: t("emergency"),
   };
 
   // Reschedule appointment
   const reschedule = (id) => {
     const newDate = prompt(
-      "Enter new date (YYYY-MM-DD):"
+      t("enterNewDate")
     );
 
     if (!newDate) {
@@ -185,7 +214,7 @@ function MyAppointments() {
     }
 
     const newTime = prompt(
-      "Enter new time (HH:MM):"
+      t("enterNewTime")
     );
 
     if (!newTime) {
@@ -212,7 +241,7 @@ function MyAppointments() {
 
       if (alreadyBooked) {
         setMessage(
-          "This time slot is already booked. Please choose another time."
+          t("timeSlotAlreadyBookedChooseAnother")
         );
 
         setMessageType("danger");
@@ -246,7 +275,7 @@ function MyAppointments() {
       );
 
       setMessage(
-        "Appointment rescheduled. Awaiting staff approval."
+        t("appointmentRescheduledAwaitingStaffApproval")
       );
 
       setMessageType("success");
@@ -259,7 +288,7 @@ function MyAppointments() {
       );
 
       setMessage(
-        "Unable to reschedule appointment. Please try again."
+        t("unableRescheduleAppointment")
       );
 
       setMessageType("danger");
@@ -270,7 +299,7 @@ function MyAppointments() {
   const cancelBooking = (id) => {
     const confirmCancel =
       window.confirm(
-        "Are you sure you want to cancel this appointment?"
+        t("confirmCancelAppointment")
       );
 
     if (!confirmCancel) {
@@ -309,7 +338,7 @@ function MyAppointments() {
       );
 
       setMessage(
-        "Appointment cancelled."
+        t("appointmentCancelled")
       );
 
       setMessageType("success");
@@ -322,7 +351,7 @@ function MyAppointments() {
       );
 
       setMessage(
-        "Unable to cancel appointment. Please try again."
+        t("unableCancelAppointment")
       );
 
       setMessageType("danger");
@@ -356,7 +385,7 @@ function MyAppointments() {
           <span>
             {user.full_name ||
               user.name ||
-              "Patient"}
+              t("patient")}
           </span>
 
           <div className="topbar-avatar">
@@ -371,7 +400,7 @@ function MyAppointments() {
       <div className="sidebar">
 
         <div className="sidebar-section">
-          Patient Menu
+          {t("patientMenu")}
         </div>
 
         <button
@@ -387,7 +416,7 @@ function MyAppointments() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </button>
 
@@ -404,7 +433,7 @@ function MyAppointments() {
           </span>
 
           <span>
-            Book Appointment
+            {t("bookAppointment")}
           </span>
         </button>
 
@@ -421,7 +450,7 @@ function MyAppointments() {
           </span>
 
           <span>
-            My Appointments
+            {t("myAppointments")}
           </span>
         </button>
 
@@ -438,7 +467,7 @@ function MyAppointments() {
           </span>
 
           <span>
-            Profile
+            {t("profile")}
           </span>
         </button>
 
@@ -453,7 +482,7 @@ function MyAppointments() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </button>
 
@@ -466,12 +495,11 @@ function MyAppointments() {
         <div className="page-header">
 
           <div className="page-title">
-            My Appointments
+            {t("myAppointments")}
           </div>
 
           <div className="page-subtitle">
-            View and manage all your clinic
-            appointments and walk-in visits
+            {t("appointmentsWalkInsOverview")}
           </div>
 
         </div>
@@ -496,7 +524,7 @@ function MyAppointments() {
             <div className="card-header">
 
               <div className="card-title">
-                My Walk-in Visits
+                {t("myWalkInVisits")}
               </div>
 
             </div>
@@ -516,27 +544,27 @@ function MyAppointments() {
                     <tr>
 
                       <th>
-                        Queue Number
+                        {t("queueNumber")}
                       </th>
 
                       <th>
-                        Department
+                        {t("department")}
                       </th>
 
                       <th>
-                        Priority
+                        {t("priority")}
                       </th>
 
                       <th>
-                        Date
+                        {t("date")}
                       </th>
 
                       <th>
-                        Time
+                        {t("time")}
                       </th>
 
                       <th>
-                        Status
+                        {t("status")}
                       </th>
 
                     </tr>
@@ -566,6 +594,9 @@ function MyAppointments() {
 
                           <td>
                             {
+                              translatedDepartment[
+                                walkin.department
+                              ] ||
                               walkin.department ||
                               "—"
                             }
@@ -573,8 +604,11 @@ function MyAppointments() {
 
                           <td>
                             {
+                              translatedPriority[
+                                walkin.priority
+                              ] ||
                               walkin.priority ||
-                              "Normal"
+                              t("normal")
                             }
                           </td>
 
@@ -630,7 +664,7 @@ function MyAppointments() {
           <div className="card-header">
 
             <div className="card-title">
-              Appointment History
+              {t("appointmentHistory")}
             </div>
 
             <button
@@ -641,7 +675,7 @@ function MyAppointments() {
                 )
               }
             >
-              + Book New Appointment
+              + {t("bookNewAppointment")}
             </button>
 
           </div>
@@ -659,8 +693,7 @@ function MyAppointments() {
 
                 <div className="spinner"></div>
 
-                Loading your
-                appointments...
+                {t("loadingYourAppointments")}
 
               </div>
             )}
@@ -676,8 +709,7 @@ function MyAppointments() {
                   </div>
 
                   <p>
-                    You don’t have any
-                    appointments yet
+                    {t("noAppointmentsYet")}
                   </p>
 
                   <button
@@ -688,8 +720,7 @@ function MyAppointments() {
                       )
                     }
                   >
-                    📅 Book Your First
-                    Appointment
+                    📅 {t("bookYourFirstAppointment")}
                   </button>
 
                 </div>
@@ -712,19 +743,19 @@ function MyAppointments() {
                         </th>
 
                         <th>
-                          Date
+                          {t("date")}
                         </th>
 
                         <th>
-                          Time
+                          {t("time")}
                         </th>
 
                         <th>
-                          Status
+                          {t("status")}
                         </th>
 
                         <th>
-                          Actions
+                          {t("actions")}
                         </th>
 
                       </tr>
@@ -807,7 +838,7 @@ function MyAppointments() {
                                       )
                                     }
                                   >
-                                    Reschedule
+                                    {t("reschedule")}
                                   </button>
 
                                   <button
@@ -822,7 +853,7 @@ function MyAppointments() {
                                       )
                                     }
                                   >
-                                    Cancel
+                                    {t("cancel")}
                                   </button>
 
                                 </>

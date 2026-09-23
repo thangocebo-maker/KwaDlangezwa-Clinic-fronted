@@ -1,132 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function Home() {
   const navigate = useNavigate();
+  const { language, changeLanguage, t } = useLanguage();
 
-  const [language, setLanguage] = useState("en");
   const [activeNav, setActiveNav] = useState(0);
-
-  const translations = {
-    en: {
-      nav: ["Home", "Register", "Log in", "About"],
-
-      welcome: "Welcome to",
-      clinicName: "KwaDlangezwa Clinic",
-      subtitle: "Bilingual Appointment and Walk-in Management System",
-      tagline: "Quality care, closer to you.",
-      accessMessage:
-        "Your health. Our care. Our community.",
-      trustIndicator: "Simple • Accessible",
-
-      chooseLanguage:
-        "Choose your preferred language",
-
-      actionHeading: "What can I do?",
-
-      bookAppointment: "Book an Appointment",
-      bookAppointmentDesc:
-        "Plan your clinic visit.",
-
-      walkInQueue: "Join the Walk-in Queue",
-      walkInQueueDesc:
-        "Check in without waiting unnecessarily.",
-
-      checkVisit: "Check My Visit",
-      checkVisitDesc:
-        "View your appointment or queue status.",
-
-      zuluName: "IsiZulu",
-      zuluSub: "Qhubekela ngesiZulu",
-
-      englishName: "English",
-      englishSub: "Proceed in English",
-
-      secureAccess:
-        "Secure access to your clinic services.",
-
-      features: [
-        "Community Focused",
-        "Bilingual Access",
-        "Secure & Private",
-      ],
-
-      footerMessage:
-        "Healthcare made simpler for our community.",
-
-      footerLinks: [
-        "Privacy",
-        "Accessibility",
-        "Help",
-      ],
-
-      needHelp: "Need help?",
-      helpAssistance:
-        "Contact the clinic reception for assistance.",
-    },
-
-    zu: {
-      nav: ["Ikhaya", "Bhalisa", "Ngena", "Mayelana"],
-
-      welcome: "Siyakwamukela e-",
-      clinicName: "KwaDlangezwa Clinic",
-      subtitle:
-        "Uhlelo lwe-Appointment ne-Walk-in Management ngezilimi ezimbili.",
-      tagline:
-        "Ukunakekelwa okuhle, kufuphi nawe.",
-      accessMessage:
-        "Impilo yakho. Ukunakekelwa kwethu. Umphakathi wethu.",
-      trustIndicator: "Lula • Kuyafinyeleleka",
-
-      chooseLanguage:
-        "Khetha ulimi oluthandayo",
-
-      actionHeading: "Ungenzani?",
-
-      bookAppointment: "Bhalisa i-Appointment",
-      bookAppointmentDesc:
-        "Hlela ukuvakasha kwakho e-clinic.",
-
-      walkInQueue: "Joyina i-Walk-in Queue",
-      walkInQueueDesc:
-        "Ngena ngaphandle kokulinda isikhathi eside.",
-
-      checkVisit: "Hlola I-Visit Yami",
-      checkVisitDesc:
-        "Buka i-appointment noma isimo se-queue.",
-
-      zuluName: "IsiZulu",
-      zuluSub: "Qhubekela ngesiZulu",
-
-      englishName: "IsiNgisi",
-      englishSub: "Qhubeka ngesiNgisi",
-
-      secureAccess:
-        "Ukufinyelela okuphephile ezinsizeni zomtholampilo.",
-
-      features: [
-        "Umphakathi",
-        "Izilimi ezimbili",
-        "Kuphephile futhi kuyimfihlo",
-      ],
-
-      footerMessage:
-        "Ukunakekelwa kwezempilo kwenziwe lula emphakathini wethu.",
-
-      footerLinks: [
-        "Ubumfihlo",
-        "Ukufinyeleleka",
-        "Usizo",
-      ],
-
-      needHelp: "Udinga usizo?",
-      helpAssistance:
-        "Xhumana ne-reception ye-clinic ukuze uthole usizo.",
-    },
-  };
-
-  const currentLanguage =
-    translations[language] || translations.en;
 
   // Navigation
   const handleNavigation = (index) => {
@@ -148,24 +28,29 @@ function Home() {
     }
 
     if (index === 3) {
-      document
-        .getElementById("about")
-        ?.scrollIntoView({
-          behavior: "smooth",
-        });
+      document.getElementById("about")?.scrollIntoView({
+        behavior: "smooth",
+      });
     }
   };
 
   // Language selection
   const handleLanguageSelect = (lang) => {
-    setLanguage(lang);
-    localStorage.setItem("clinic_lang", lang);
+    changeLanguage(lang);
   };
+
+  const navItems = [
+    t("home"),
+    t("register"),
+    t("login"),
+    t("about"),
+  ];
 
   return (
     <div className="page">
 
-      {/* NAVIGATION */}
+      {/* ================= NAVIGATION ================= */}
+
       <nav className="navbar">
 
         <button
@@ -182,35 +67,29 @@ function Home() {
 
         <div className="nav-links">
 
-          {currentLanguage.nav.map(
-            (item, index) => (
-              <button
-                key={item}
-                className={`nav-link ${
-                  activeNav === index
-                    ? "active"
-                    : ""
-                } ${
-                  index === 1
-                    ? "register-btn"
-                    : ""
-                }`}
-                onClick={() =>
-                  handleNavigation(index)
-                }
-              >
-                {item}
-              </button>
-            )
-          )}
+          {navItems.map((item, index) => (
+            <button
+              key={index}
+              className={`nav-link ${
+                activeNav === index ? "active" : ""
+              } ${
+                index === 1 ? "register-btn" : ""
+              }`}
+              onClick={() => handleNavigation(index)}
+            >
+              {item}
+            </button>
+          ))}
 
         </div>
       </nav>
 
-      {/* HERO */}
+      {/* ================= HERO ================= */}
+
       <header className="hero">
 
         {/* Decorative healthcare artwork */}
+
         <div
           className="hero-art"
           aria-hidden="true"
@@ -297,11 +176,12 @@ function Home() {
 
         <div className="app-content">
 
-          {/* HERO TEXT */}
+          {/* ================= HERO TEXT ================= */}
+
           <section className="hero-copy">
 
             <div className="welcome-badge">
-              {currentLanguage.welcome}
+              {t("welcome")}
             </div>
 
             <h1 className="hero-title">
@@ -314,42 +194,42 @@ function Home() {
             </h1>
 
             <p className="hero-tagline">
-              {currentLanguage.tagline}
+              {t("tagline")}
             </p>
 
             <p className="hero-subtitle">
-              {currentLanguage.subtitle}
+              {t("subtitle")}
             </p>
 
             <p className="hero-access-message">
-              {currentLanguage.accessMessage}
+              {t("accessMessage")}
             </p>
 
             <p className="trust-indicator">
-              {currentLanguage.trustIndicator}
+              {t("trustIndicator")}
             </p>
 
             <div className="hero-rule" />
 
           </section>
 
-          {/* LANGUAGE PANEL */}
+          {/* ================= LANGUAGE PANEL ================= */}
+
           <section className="hero-overlay language-panel">
 
             <div className="panel-heading">
               <h2 className="choose-language">
-                {currentLanguage.chooseLanguage}
+                {t("chooseLanguage")}
               </h2>
             </div>
 
             <div className="lang-cards">
 
-              {/* ISIZULU */}
+              {/* ================= ISIZULU ================= */}
+
               <button
                 className={`lang-card ${
-                  language === "zu"
-                    ? "selected"
-                    : ""
+                  language === "zu" ? "selected" : ""
                 }`}
                 onClick={() =>
                   handleLanguageSelect("zu")
@@ -360,13 +240,15 @@ function Home() {
                 </span>
 
                 <span className="lang-text">
+
                   <span className="lang-name">
-                    {currentLanguage.zuluName}
+                    {t("zuluName")}
                   </span>
 
                   <span className="lang-sub">
-                    {currentLanguage.zuluSub}
+                    {t("zuluSub")}
                   </span>
+
                 </span>
 
                 <span className="lang-arrow">
@@ -374,12 +256,11 @@ function Home() {
                 </span>
               </button>
 
-              {/* ENGLISH */}
+              {/* ================= ENGLISH ================= */}
+
               <button
                 className={`lang-card ${
-                  language === "en"
-                    ? "selected"
-                    : ""
+                  language === "en" ? "selected" : ""
                 }`}
                 onClick={() =>
                   handleLanguageSelect("en")
@@ -390,13 +271,15 @@ function Home() {
                 </span>
 
                 <span className="lang-text">
+
                   <span className="lang-name">
-                    {currentLanguage.englishName}
+                    {t("englishName")}
                   </span>
 
                   <span className="lang-sub">
-                    {currentLanguage.englishSub}
+                    {t("englishSub")}
                   </span>
+
                 </span>
 
                 <span className="lang-arrow">
@@ -407,122 +290,148 @@ function Home() {
             </div>
 
             <p className="panel-note">
-              {currentLanguage.secureAccess}
+              {t("secureAccess")}
             </p>
 
-            {language && (
-              <p className="lang-confirm">
-                {language === "zu"
-                  ? "Uqhubeka ngesiZulu..."
-                  : "Continuing in English..."}
-              </p>
-            )}
+            <p className="lang-confirm">
+              {language === "zu"
+                ? t("continuingZulu")
+                : t("continuingEnglish")}
+            </p>
 
           </section>
 
         </div>
       </header>
 
-      {/* ACTION CARDS */}
+      {/* ================= ACTION CARDS ================= */}
+
       <section
         className="action-cards-section"
-        aria-label="Clinic services"
+        aria-label={t("clinicServices")}
       >
 
         <h2 className="action-heading">
-          {currentLanguage.actionHeading}
+          {t("actionHeading")}
         </h2>
 
         <div className="action-cards">
 
-          {/* BOOK - STATIC */}
+          {/* BOOK APPOINTMENT */}
+
           <div className="action-card">
+
             <span className="action-icon">
               📅
             </span>
 
             <h3>
-              {currentLanguage.bookAppointment}
+              {t("bookAppointment")}
             </h3>
 
             <p>
-              {currentLanguage.bookAppointmentDesc}
+              {t("bookAppointmentDesc")}
             </p>
+
           </div>
 
-          {/* WALK-IN - STATIC */}
+          {/* WALK-IN */}
+
           <div className="action-card">
+
             <span className="action-icon">
               🚶
             </span>
 
             <h3>
-              {currentLanguage.walkInQueue}
+              {t("walkInQueue")}
             </h3>
 
             <p>
-              {currentLanguage.walkInQueueDesc}
+              {t("walkInQueueDesc")}
             </p>
+
           </div>
 
-          {/* CHECK VISIT - STATIC */}
+          {/* CHECK VISIT */}
+
           <div className="action-card">
+
             <span className="action-icon">
               🔎
             </span>
 
             <h3>
-              {currentLanguage.checkVisit}
+              {t("checkVisit")}
             </h3>
 
             <p>
-              {currentLanguage.checkVisitDesc}
+              {t("checkVisitDesc")}
             </p>
+
           </div>
 
         </div>
       </section>
 
-      {/* FEATURES */}
+      {/* ================= FEATURES ================= */}
+
       <section
         className="feature-strip"
-        aria-label="Clinic benefits"
+        aria-label={t("clinicBenefits")}
       >
 
-        {currentLanguage.features.map(
-          (feature, index) => (
-            <div
-              className="feature-item"
-              key={feature}
-            >
-              <span
-                className={`feature-icon feature-icon-${index}`}
-              />
+        <div className="feature-item">
 
-              <strong>
-                {feature}
-              </strong>
-            </div>
-          )
-        )}
+          <span className="feature-icon feature-icon-0" />
+
+          <strong>
+            {t("communityFocused")}
+          </strong>
+
+        </div>
+
+        <div className="feature-item">
+
+          <span className="feature-icon feature-icon-1" />
+
+          <strong>
+            {t("bilingualAccess")}
+          </strong>
+
+        </div>
+
+        <div className="feature-item">
+
+          <span className="feature-icon feature-icon-2" />
+
+          <strong>
+            {t("securePrivate")}
+          </strong>
+
+        </div>
 
       </section>
 
-      {/* ABOUT */}
+      {/* ================= ABOUT ================= */}
+
       <section
         id="about"
         className="about-section"
       >
-        <h2>About KwaDlangezwa Clinic</h2>
+
+        <h2>
+          {t("aboutClinic")}
+        </h2>
 
         <p>
-          The KwaDlangezwa Clinic Portal provides
-          a simple and accessible way for patients
-          to manage appointments and clinic visits.
+          {t("aboutClinicText")}
         </p>
+
       </section>
 
-      {/* FOOTER */}
+      {/* ================= FOOTER ================= */}
+
       <footer className="site-footer">
 
         <strong>
@@ -530,35 +439,38 @@ function Home() {
         </strong>
 
         <p>
-          {currentLanguage.footerMessage}
+          {t("footerMessage")}
         </p>
 
         <nav
           className="footer-links"
-          aria-label="Footer links"
+          aria-label={t("footerNavigation")}
         >
-          {currentLanguage.footerLinks.map(
-            (link) => (
-              <a
-                href={`#${link
-                  .toLowerCase()
-                  .replaceAll(" ", "-")}`}
-                key={link}
-              >
-                {link}
-              </a>
-            )
-          )}
+
+          <a href="#privacy">
+            {t("privacy")}
+          </a>
+
+          <a href="#accessibility">
+            {t("accessibility")}
+          </a>
+
+          <a href="#help">
+            {t("help")}
+          </a>
+
         </nav>
+
+        {/* ================= HELP ================= */}
 
         <div className="footer-help-section">
 
           <h3 className="footer-help-title">
-            {currentLanguage.needHelp}
+            {t("needHelp")}
           </h3>
 
           <p className="footer-help-text">
-            {currentLanguage.helpAssistance}
+            {t("helpAssistance")}
           </p>
 
           <div className="footer-help-icons">
@@ -566,7 +478,7 @@ function Home() {
             <a
               href="#help"
               className="help-icon"
-              title="Help"
+              title={t("help")}
             >
               ❓
             </a>
@@ -574,7 +486,7 @@ function Home() {
             <a
               href="#privacy"
               className="help-icon"
-              title="Privacy Policy"
+              title={t("privacyPolicy")}
             >
               🔒
             </a>
@@ -582,7 +494,7 @@ function Home() {
             <a
               href="#contact"
               className="help-icon"
-              title="Contact"
+              title={t("contact")}
             >
               📞
             </a>

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function ManageWalkins() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [walkins, setWalkins] = useState([]);
@@ -59,10 +61,15 @@ function ManageWalkins() {
     setLoading(true);
 
     try {
-      const storedWalkins =
-        JSON.parse(localStorage.getItem("clinic_walkins")) || [];
+      const storedWalkins = JSON.parse(
+        localStorage.getItem("clinic_walkins") || "[]"
+      );
 
-      setWalkins(storedWalkins);
+      if (Array.isArray(storedWalkins)) {
+        setWalkins(storedWalkins);
+      } else {
+        setWalkins([]);
+      }
     } catch (error) {
       console.error("Error loading walk-ins:", error);
       setWalkins([]);
@@ -93,7 +100,7 @@ function ManageWalkins() {
     existingWalkins.forEach((walkin) => {
       if (walkin.queue_number) {
         const number = parseInt(
-          walkin.queue_number.replace("W", ""),
+          String(walkin.queue_number).replace("W", ""),
           10
         );
 
@@ -115,6 +122,9 @@ function ManageWalkins() {
     setMessage("");
     setMessageType("");
 
+    // -----------------------------------------
+    // Validate required fields
+    // -----------------------------------------
     if (
       !fullName.trim() ||
       !email.trim() ||
@@ -124,108 +134,183 @@ function ManageWalkins() {
       !department ||
       !priority
     ) {
-      showMessage(
-        "Please complete all required fields.",
-        "danger"
-      );
+      showMessage(t("completeRequiredFields"), "danger");
       return;
     }
 
+    // -----------------------------------------
+    // Validate password
+    // -----------------------------------------
     if (password !== confirmPassword) {
-      showMessage(
-        "Passwords do not match.",
-        "danger"
-      );
+      showMessage(t("passwordsDoNotMatch"), "danger");
       return;
     }
 
     if (password.length < 6) {
-      showMessage(
-        "Password must be at least 6 characters.",
-        "danger"
-      );
+      showMessage(t("minimum6Characters"), "danger");
       return;
     }
 
+    // -----------------------------------------
+    // Validate email
+    // -----------------------------------------
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(email.trim())) {
-      showMessage(
-        "Please enter a valid email address.",
-        "danger"
-      );
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!emailRegex.test(cleanEmail)) {
+      showMessage(t("invalidEmail"), "danger");
       return;
     }
 
     try {
-      // Existing users
-      const existingUsers =
-        JSON.parse(localStorage.getItem("clinic_users")) || [];
+      // =====================================================
+      // GET EXISTING USERS
+      // =====================================================
+      let existingUsers = [];
 
-      // Check email
+      try {
+        const storedUsers = JSON.parse(
+          localStorage.getItem("clinic_users") || "[]"
+        );
+
+        if (Array.isArray(storedUsers)) {
+          existingUsers = storedUsers;
+        }
+      } catch (error) {
+        console.error("Error reading clinic_users:", error);
+        existingUsers = [];
+      }
+
+      // =====================================================
+      // CHECK IF EMAIL ALREADY EXISTS
+      // =====================================================
       const emailExists = existingUsers.some(
         (existingUser) =>
-          existingUser.email?.toLowerCase() ===
-          email.trim().toLowerCase()
+          existingUser.email?.trim().toLowerCase() === cleanEmail
       );
 
       if (emailExists) {
+        showMessage(t("patientAccountEmailExists"), "danger");
+        return;
+      }
+
+      // =====================================================
+      // CHECK IF PHONE ALREADY EXISTS
+      // =====================================================
+      const cleanPhone = phone.trim();
+
+      const phoneExists = existingUsers.some(
+        (existingUser) =>
+          existingUser.phone?.trim() === cleanPhone
+      );
+
+      if (phoneExists) {
         showMessage(
-          "A patient account with this email already exists.",
+          "A patient account with this phone number already exists.",
           "danger"
         );
         return;
       }
 
-      // Existing walk-ins
-      const existingWalkins =
-        JSON.parse(localStorage.getItem("clinic_walkins")) || [];
+      // =====================================================
+      // GET EXISTING WALK-INS
+      // =====================================================
+      let existingWalkins = [];
 
-      // Patient ID
-      const patientId = Date.now();
+      try {
+        const storedWalkins = JSON.parse(
+          localStorage.getItem("clinic_walkins") || "[]"
+        );
 
-      // Queue number
-      const queueNumber =
-        generateQueueNumber(existingWalkins);
+        if (Array.isArray(storedWalkins)) {
+          existingWalkins = storedWalkins;
+        }
+      } catch (error) {
+        console.error("Error reading clinic_walkins:", error);
+        existingWalkins = [];
+      }
 
+      // =====================================================
+      // GENERATE IDS
+      // =====================================================
+      const timestamp = Date.now();
+
+      const patientId = timestamp;
+
+      const walkinId = timestamp + 1;
+
+      // =====================================================
+      // GENERATE QUEUE NUMBER
+      // =====================================================
+      const queueNumber = generateQueueNumber(existingWalkins);
+
+      // =====================================================
+      // CURRENT DATE AND TIME
+      // =====================================================
       const now = new Date();
 
-      const currentDate =
-        now.toISOString().split("T")[0];
+      const currentDate = now.toISOString().split("T")[0];
 
-      const currentTime =
-        now.toTimeString().slice(0, 5);
+      const currentTime = now.toTimeString().slice(0, 5);
 
-      // Patient account
+      // =====================================================
+      // CREATE PATIENT ACCOUNT
+      // =====================================================
       const patientAccount = {
         id: patientId,
+
+        // Keep both names for compatibility
+        name: fullName.trim(),
         full_name: fullName.trim(),
-        email: email.trim().toLowerCase(),
-        phone: phone.trim(),
+
+        email: cleanEmail,
+
+        phone: cleanPhone,
+
         password: password,
+
         role: "patient",
+
         created_at: now.toISOString(),
       };
 
-      // Walk-in record
+      // =====================================================
+      // CREATE WALK-IN RECORD
+      // =====================================================
       const newWalkin = {
-        id: Date.now() + 1,
+        id: walkinId,
+
         patient_id: patientId,
+
         patient_name: fullName.trim(),
-        patient_email: email.trim().toLowerCase(),
-        patient_phone: phone.trim(),
+
+        patient_email: cleanEmail,
+
+        patient_phone: cleanPhone,
+
         queue_number: queueNumber,
+
         department: department,
+
         priority: priority,
+
         status: "Waiting",
+
         date: currentDate,
+
         time: currentTime,
+
         registered_by: user?.id || null,
+
         type: "Walk-in",
+
         created_at: now.toISOString(),
       };
 
-      // Save patient
+      // =====================================================
+      // SAVE PATIENT ACCOUNT
+      // =====================================================
       const updatedUsers = [
         ...existingUsers,
         patientAccount,
@@ -236,7 +321,9 @@ function ManageWalkins() {
         JSON.stringify(updatedUsers)
       );
 
-      // Save walk-in
+      // =====================================================
+      // SAVE WALK-IN
+      // =====================================================
       const updatedWalkins = [
         ...existingWalkins,
         newWalkin,
@@ -247,9 +334,14 @@ function ManageWalkins() {
         JSON.stringify(updatedWalkins)
       );
 
+      // =====================================================
+      // UPDATE SCREEN
+      // =====================================================
       setWalkins(updatedWalkins);
 
-      // Clear form
+      // =====================================================
+      // CLEAR FORM
+      // =====================================================
       setFullName("");
       setEmail("");
       setPhone("");
@@ -260,18 +352,25 @@ function ManageWalkins() {
 
       setShowWalkinForm(false);
 
+      // =====================================================
+      // SUCCESS MESSAGE
+      // =====================================================
       showMessage(
-        `Walk-in registered successfully. Queue number: ${queueNumber}. The patient can now log in using their email and password.`,
+        `${t("walkinRegisteredSuccessfully")} ${t(
+          "queueNumber"
+        )}: ${queueNumber}. ${t("patientCanLogin")}`,
         "success"
       );
+
+      console.log("Walk-in patient registered:", {
+        patientAccount,
+        newWalkin,
+      });
     } catch (error) {
-      console.error(
-        "Error registering walk-in:",
-        error
-      );
+      console.error("Error registering walk-in:", error);
 
       showMessage(
-        "An error occurred while registering the walk-in patient.",
+        t("walkinRegistrationError"),
         "danger"
       );
     }
@@ -280,23 +379,18 @@ function ManageWalkins() {
   // =========================================================
   // UPDATE STATUS
   // =========================================================
-  const updateWalkinStatus = (
-    walkinId,
-    newStatus
-  ) => {
-    const updatedWalkins = walkins.map(
-      (walkin) => {
-        if (walkin.id === walkinId) {
-          return {
-            ...walkin,
-            status: newStatus,
-            updated_at: new Date().toISOString(),
-          };
-        }
-
-        return walkin;
+  const updateWalkinStatus = (walkinId, newStatus) => {
+    const updatedWalkins = walkins.map((walkin) => {
+      if (walkin.id === walkinId) {
+        return {
+          ...walkin,
+          status: newStatus,
+          updated_at: new Date().toISOString(),
+        };
       }
-    );
+
+      return walkin;
+    });
 
     setWalkins(updatedWalkins);
 
@@ -306,7 +400,7 @@ function ManageWalkins() {
     );
 
     showMessage(
-      `Walk-in status updated to "${newStatus}".`,
+      `${t("walkinStatusUpdated")} "${newStatus}".`,
       "success"
     );
   };
@@ -324,7 +418,7 @@ function ManageWalkins() {
     }
 
     const confirmed = window.confirm(
-      `Are you sure you want to remove the walk-in for ${walkinToDelete.patient_name}?`
+      `${t("removeWalkinConfirmation")} ${walkinToDelete.patient_name}?`
     );
 
     if (!confirmed) {
@@ -342,24 +436,34 @@ function ManageWalkins() {
       JSON.stringify(updatedWalkins)
     );
 
+    // -----------------------------------------
     // Remove linked patient account
+    // -----------------------------------------
     if (walkinToDelete.patient_id) {
-      const existingUsers =
-        JSON.parse(localStorage.getItem("clinic_users")) || [];
+      try {
+        const existingUsers = JSON.parse(
+          localStorage.getItem("clinic_users") || "[]"
+        );
 
-      const updatedUsers = existingUsers.filter(
-        (existingUser) =>
-          existingUser.id !== walkinToDelete.patient_id
-      );
+        const updatedUsers = existingUsers.filter(
+          (existingUser) =>
+            existingUser.id !== walkinToDelete.patient_id
+        );
 
-      localStorage.setItem(
-        "clinic_users",
-        JSON.stringify(updatedUsers)
-      );
+        localStorage.setItem(
+          "clinic_users",
+          JSON.stringify(updatedUsers)
+        );
+      } catch (error) {
+        console.error(
+          "Error removing patient account:",
+          error
+        );
+      }
     }
 
     showMessage(
-      "Walk-in patient removed successfully.",
+      t("walkinPatientRemoved"),
       "success"
     );
   };
@@ -367,19 +471,17 @@ function ManageWalkins() {
   // =========================================================
   // FILTER WALK-INS
   // =========================================================
-  const filteredWalkins = walkins.filter(
-    (walkin) => {
-      const statusMatch =
-        statusFilter === "All" ||
-        walkin.status === statusFilter;
+  const filteredWalkins = walkins.filter((walkin) => {
+    const statusMatch =
+      statusFilter === "All" ||
+      walkin.status === statusFilter;
 
-      const departmentMatch =
-        departmentFilter === "All" ||
-        walkin.department === departmentFilter;
+    const departmentMatch =
+      departmentFilter === "All" ||
+      walkin.department === departmentFilter;
 
-      return statusMatch && departmentMatch;
-    }
-  );
+    return statusMatch && departmentMatch;
+  });
 
   // =========================================================
   // STATISTICS
@@ -410,7 +512,6 @@ function ManageWalkins() {
 
   // =========================================================
   // STATUS BADGE
-  // Matches existing CSS: badge-*
   // =========================================================
   const getStatusBadge = (status) => {
     switch (status) {
@@ -447,6 +548,39 @@ function ManageWalkins() {
     }
   };
 
+  // =========================================================
+  // TRANSLATED STATUS
+  // =========================================================
+  const translatedStatus = {
+    Waiting: t("waiting"),
+    "In Progress": t("inProgress"),
+    Completed: t("completed"),
+    "No-show": t("noShow"),
+  };
+
+  // =========================================================
+  // TRANSLATED PRIORITY
+  // =========================================================
+  const translatedPriority = {
+    Normal: t("normal"),
+    Urgent: t("urgent"),
+    Emergency: t("emergency"),
+  };
+
+  // =========================================================
+  // TRANSLATED DEPARTMENT
+  // =========================================================
+  const translatedDepartment = {
+    General: t("general"),
+    Dental: t("dental"),
+    Maternal: t("maternal"),
+    "Child Health": t("childHealth"),
+    Chronic: t("chronicCare"),
+  };
+
+  // =========================================================
+  // WAIT FOR USER
+  // =========================================================
   if (!user) {
     return null;
   }
@@ -465,7 +599,7 @@ function ManageWalkins() {
           <span>
             {user.full_name ||
               user.name ||
-              "Nurse"}
+              t("nurse")}
           </span>
 
           <div className="topbar-avatar">
@@ -479,7 +613,7 @@ function ManageWalkins() {
       ===================================================== */}
       <aside className="sidebar">
         <div className="sidebar-section">
-          Nurse Menu
+          {t("nurseMenu")}
         </div>
 
         <nav className="sidebar-nav">
@@ -490,7 +624,7 @@ function ManageWalkins() {
             }
           >
             <span className="icon">🏠</span>
-            <span>Dashboard</span>
+            <span>{t("dashboard")}</span>
           </button>
 
           <button
@@ -500,7 +634,7 @@ function ManageWalkins() {
             }
           >
             <span className="icon">📅</span>
-            <span>Manage Appointments</span>
+            <span>{t("manageAppointments")}</span>
           </button>
 
           <button
@@ -510,7 +644,7 @@ function ManageWalkins() {
             }
           >
             <span className="icon">🚶</span>
-            <span>Manage Walk-ins</span>
+            <span>{t("manageWalkIns")}</span>
           </button>
 
           <hr className="sidebar-divider" />
@@ -522,7 +656,7 @@ function ManageWalkins() {
             }
           >
             <span className="icon">👤</span>
-            <span>My Profile</span>
+            <span>{t("myProfile")}</span>
           </button>
 
           <button
@@ -530,7 +664,7 @@ function ManageWalkins() {
             onClick={logout}
           >
             <span className="icon">🚪</span>
-            <span>Logout</span>
+            <span>{t("logout")}</span>
           </button>
         </nav>
       </aside>
@@ -544,12 +678,11 @@ function ManageWalkins() {
         <div className="page-header">
           <div>
             <h1 className="page-title">
-              Manage Walk-in Patients
+              {t("manageWalkInPatients")}
             </h1>
 
             <p className="page-subtitle">
-              Register and manage patients
-              who arrive without an appointment
+              {t("manageWalkInPatientsSubtitle")}
             </p>
           </div>
 
@@ -562,8 +695,8 @@ function ManageWalkins() {
             }
           >
             {showWalkinForm
-              ? "Close Form"
-              : "Register Walk-in"}
+              ? t("closeForm")
+              : t("registerWalkIn")}
           </button>
         </div>
 
@@ -585,22 +718,19 @@ function ManageWalkins() {
         ================================================= */}
         {showWalkinForm && (
           <section className="card">
-
             <div className="card-header">
               <div>
                 <div className="card-title">
-                  Register Walk-in Patient
+                  {t("registerWalkInPatient")}
                 </div>
 
                 <p className="page-subtitle">
-                  Create a patient account and
-                  add them to the walk-in queue.
+                  {t("createPatientWalkInQueue")}
                 </p>
               </div>
             </div>
 
             <div className="card-body">
-
               <form onSubmit={registerWalkin}>
 
                 <div className="form-row">
@@ -608,7 +738,7 @@ function ManageWalkins() {
                   {/* Full Name */}
                   <div className="form-group">
                     <label className="form-label">
-                      Full Name *
+                      {t("fullName")} *
                     </label>
 
                     <input
@@ -620,14 +750,14 @@ function ManageWalkins() {
                           event.target.value
                         )
                       }
-                      placeholder="Enter full name"
+                      placeholder={t("enterFullName")}
                     />
                   </div>
 
                   {/* Email */}
                   <div className="form-group">
                     <label className="form-label">
-                      Email *
+                      {t("email")} *
                     </label>
 
                     <input
@@ -639,14 +769,16 @@ function ManageWalkins() {
                           event.target.value
                         )
                       }
-                      placeholder="Enter email address"
+                      placeholder={
+                        t("emailAddress")
+                      }
                     />
                   </div>
 
                   {/* Phone */}
                   <div className="form-group">
                     <label className="form-label">
-                      Phone *
+                      {t("phone")} *
                     </label>
 
                     <input
@@ -658,14 +790,14 @@ function ManageWalkins() {
                           event.target.value
                         )
                       }
-                      placeholder="Enter phone number"
+                      placeholder={t("phoneNumber")}
                     />
                   </div>
 
                   {/* Password */}
                   <div className="form-group">
                     <label className="form-label">
-                      Password *
+                      {t("password")} *
                     </label>
 
                     <input
@@ -677,14 +809,16 @@ function ManageWalkins() {
                           event.target.value
                         )
                       }
-                      placeholder="Create password"
+                      placeholder={
+                        t("minimum6Characters")
+                      }
                     />
                   </div>
 
                   {/* Confirm Password */}
                   <div className="form-group">
                     <label className="form-label">
-                      Confirm Password *
+                      {t("confirmPassword")} *
                     </label>
 
                     <input
@@ -696,14 +830,16 @@ function ManageWalkins() {
                           event.target.value
                         )
                       }
-                      placeholder="Confirm password"
+                      placeholder={
+                        t("confirmPassword")
+                      }
                     />
                   </div>
 
                   {/* Department */}
                   <div className="form-group">
                     <label className="form-label">
-                      Department *
+                      {t("department")} *
                     </label>
 
                     <select
@@ -716,27 +852,27 @@ function ManageWalkins() {
                       }
                     >
                       <option value="">
-                        Select Department
+                        {t("selectDepartment")}
                       </option>
 
                       <option value="General">
-                        General
+                        {t("general")}
                       </option>
 
                       <option value="Dental">
-                        Dental
+                        {t("dental")}
                       </option>
 
                       <option value="Maternal">
-                        Maternal
+                        {t("maternal")}
                       </option>
 
                       <option value="Child Health">
-                        Child Health
+                        {t("childHealth")}
                       </option>
 
                       <option value="Chronic">
-                        Chronic Care
+                        {t("chronicCare")}
                       </option>
                     </select>
                   </div>
@@ -744,7 +880,7 @@ function ManageWalkins() {
                   {/* Priority */}
                   <div className="form-group">
                     <label className="form-label">
-                      Priority *
+                      {t("priority")} *
                     </label>
 
                     <select
@@ -757,39 +893,39 @@ function ManageWalkins() {
                       }
                     >
                       <option value="Normal">
-                        Normal
+                        {t("normal")}
                       </option>
 
                       <option value="Urgent">
-                        Urgent
+                        {t("urgent")}
                       </option>
 
                       <option value="Emergency">
-                        Emergency
+                        {t("emergency")}
                       </option>
                     </select>
                   </div>
-
                 </div>
 
                 {/* FORM BUTTONS */}
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                >
-                  Register Patient
-                </button>
+                <div className="action-buttons">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                  >
+                    {t("registerWalkIn")}
+                  </button>
 
-                <button
-                  type="button"
-                  className="btn btn-outline"
-                  onClick={() =>
-                    setShowWalkinForm(false)
-                  }
-                >
-                  Cancel
-                </button>
-
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    onClick={() =>
+                      setShowWalkinForm(false)
+                    }
+                  >
+                    {t("cancel")}
+                  </button>
+                </div>
               </form>
             </div>
           </section>
@@ -802,7 +938,7 @@ function ManageWalkins() {
 
           <div className="stat-card">
             <div className="stat-label">
-              Total Walk-ins
+              {t("totalWalkIns")}
             </div>
 
             <div className="stat-value primary">
@@ -812,7 +948,7 @@ function ManageWalkins() {
 
           <div className="stat-card">
             <div className="stat-label">
-              Waiting
+              {t("waiting")}
             </div>
 
             <div className="stat-value warning">
@@ -822,7 +958,7 @@ function ManageWalkins() {
 
           <div className="stat-card">
             <div className="stat-label">
-              In Progress
+              {t("inProgress")}
             </div>
 
             <div className="stat-value primary">
@@ -832,7 +968,7 @@ function ManageWalkins() {
 
           <div className="stat-card">
             <div className="stat-label">
-              Completed
+              {t("completed")}
             </div>
 
             <div className="stat-value success">
@@ -842,28 +978,26 @@ function ManageWalkins() {
 
           <div className="stat-card">
             <div className="stat-label">
-              No-show
+              {t("noShow")}
             </div>
 
             <div className="stat-value danger">
               {noShowCount}
             </div>
           </div>
-
         </div>
 
         {/* =================================================
             FILTERS
         ================================================= */}
         <section className="card">
-
           <div className="card-body">
-
             <div className="form-row">
 
+              {/* Status Filter */}
               <div className="form-group">
                 <label className="form-label">
-                  Status
+                  {t("status")}
                 </label>
 
                 <select
@@ -876,30 +1010,31 @@ function ManageWalkins() {
                   }
                 >
                   <option value="All">
-                    All
+                    {t("all")}
                   </option>
 
                   <option value="Waiting">
-                    Waiting
+                    {t("waiting")}
                   </option>
 
                   <option value="In Progress">
-                    In Progress
+                    {t("inProgress")}
                   </option>
 
                   <option value="Completed">
-                    Completed
+                    {t("completed")}
                   </option>
 
                   <option value="No-show">
-                    No-show
+                    {t("noShow")}
                   </option>
                 </select>
               </div>
 
+              {/* Department Filter */}
               <div className="form-group">
                 <label className="form-label">
-                  Department
+                  {t("department")}
                 </label>
 
                 <select
@@ -912,33 +1047,32 @@ function ManageWalkins() {
                   }
                 >
                   <option value="All">
-                    All
+                    {t("all")}
                   </option>
 
                   <option value="General">
-                    General
+                    {t("general")}
                   </option>
 
                   <option value="Dental">
-                    Dental
+                    {t("dental")}
                   </option>
 
                   <option value="Maternal">
-                    Maternal
+                    {t("maternal")}
                   </option>
 
                   <option value="Child Health">
-                    Child Health
+                    {t("childHealth")}
                   </option>
 
                   <option value="Chronic">
-                    Chronic Care
+                    {t("chronicCare")}
                   </option>
                 </select>
               </div>
 
             </div>
-
           </div>
         </section>
 
@@ -946,49 +1080,44 @@ function ManageWalkins() {
             WALK-IN QUEUE
         ================================================= */}
         <section className="card">
-
           <div className="card-header">
             <div>
               <div className="card-title">
-                Walk-in Queue
+                {t("walkInQueue")}
               </div>
 
               <p className="page-subtitle">
-                View and manage today's
-                walk-in patients.
+                {t("viewManageTodaysWalkIns")}
               </p>
             </div>
           </div>
 
           {loading ? (
             <div className="card-body">
-              Loading walk-ins...
+              {t("loadingWalkIns")}
             </div>
           ) : filteredWalkins.length === 0 ? (
             <div className="card-body">
-              No walk-in patients found.
+              {t("noWalkInPatientsFound")}
             </div>
           ) : (
             <div className="table-container">
-
               <table>
-
                 <thead>
                   <tr>
-                    <th>Queue</th>
-                    <th>Patient</th>
-                    <th>Contact</th>
-                    <th>Department</th>
-                    <th>Priority</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>{t("queue")}</th>
+                    <th>{t("patient")}</th>
+                    <th>{t("contact")}</th>
+                    <th>{t("department")}</th>
+                    <th>{t("priority")}</th>
+                    <th>{t("date")}</th>
+                    <th>{t("time")}</th>
+                    <th>{t("status")}</th>
+                    <th>{t("actions")}</th>
                   </tr>
                 </thead>
 
                 <tbody>
-
                   {filteredWalkins.map(
                     (walkin) => (
                       <tr key={walkin.id}>
@@ -1014,7 +1143,10 @@ function ManageWalkins() {
                         </td>
 
                         <td>
-                          {walkin.department}
+                          {translatedDepartment[
+                            walkin.department
+                          ] ||
+                            walkin.department}
                         </td>
 
                         <td>
@@ -1023,7 +1155,10 @@ function ManageWalkins() {
                               walkin.priority
                             )}
                           >
-                            {walkin.priority}
+                            {translatedPriority[
+                              walkin.priority
+                            ] ||
+                              walkin.priority}
                           </span>
                         </td>
 
@@ -1041,14 +1176,17 @@ function ManageWalkins() {
                               walkin.status
                             )}
                           >
-                            {walkin.status}
+                            {translatedStatus[
+                              walkin.status
+                            ] ||
+                              walkin.status}
                           </span>
                         </td>
 
                         <td>
-
                           <div className="action-buttons">
 
+                            {/* START */}
                             {walkin.status ===
                               "Waiting" && (
                               <button
@@ -1060,10 +1198,11 @@ function ManageWalkins() {
                                   )
                                 }
                               >
-                                Start
+                                {t("start")}
                               </button>
                             )}
 
+                            {/* COMPLETE */}
                             {walkin.status ===
                               "In Progress" && (
                               <button
@@ -1075,10 +1214,11 @@ function ManageWalkins() {
                                   )
                                 }
                               >
-                                Complete
+                                {t("complete")}
                               </button>
                             )}
 
+                            {/* NO-SHOW */}
                             {walkin.status !==
                               "Completed" &&
                               walkin.status !==
@@ -1092,10 +1232,11 @@ function ManageWalkins() {
                                     )
                                   }
                                 >
-                                  No-show
+                                  {t("noShow")}
                                 </button>
                               )}
 
+                            {/* DELETE */}
                             <button
                               className="btn btn-danger btn-sm"
                               onClick={() =>
@@ -1104,26 +1245,19 @@ function ManageWalkins() {
                                 )
                               }
                             >
-                              Delete
+                              {t("delete")}
                             </button>
 
                           </div>
-
                         </td>
-
                       </tr>
                     )
                   )}
-
                 </tbody>
-
               </table>
-
             </div>
           )}
-
         </section>
-
       </main>
     </>
   );

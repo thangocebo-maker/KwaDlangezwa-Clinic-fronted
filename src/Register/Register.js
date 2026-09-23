@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function Register() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,7 +30,7 @@ function Register() {
     // Password length
     if (password.length < 6) {
       setAlert({
-        message: "Password must be at least 6 characters.",
+        message: t("passwordTooShort"),
         type: "danger",
       });
       return;
@@ -37,7 +39,7 @@ function Register() {
     // Check passwords
     if (password !== confirmPassword) {
       setAlert({
-        message: "Passwords do not match.",
+        message: t("passwordsDoNotMatch"),
         type: "danger",
       });
       return;
@@ -57,7 +59,7 @@ function Register() {
 
     if (emailExists) {
       setAlert({
-        message: "An account with this email already exists.",
+        message: t("emailAlreadyExists"),
         type: "danger",
       });
 
@@ -92,7 +94,7 @@ function Register() {
 
     // Success message
     setAlert({
-      message: "Account created! Redirecting...",
+      message: t("registrationSuccessful"),
       type: "success",
     });
 
@@ -114,7 +116,7 @@ function Register() {
           Clinic<span>Booking</span>
         </h1>
 
-        <p>Register to access your patient account</p>
+        <p>{t("registerInstruction")}</p>
       </div>
 
       {/* Alert Message */}
@@ -136,14 +138,14 @@ function Register() {
         {/* Full Name */}
         <div className="form-group">
           <label className="form-label">
-            Full Name
+            {t("fullName")}
           </label>
 
           <input
             type="text"
             id="full_name"
             className="form-control"
-            placeholder="e.g. Cebo Thango"
+            placeholder={t("enterFullName")}
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
@@ -155,14 +157,14 @@ function Register() {
 
           <div className="form-group">
             <label className="form-label">
-              Email Address
+              {t("email")}
             </label>
 
             <input
               type="email"
               id="email"
               className="form-control"
-              placeholder="your@email.com"
+              placeholder={t("enterEmail")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -174,7 +176,7 @@ function Register() {
               className="form-label"
               htmlFor="phone"
             >
-              Phone number
+              {t("phone")}
             </label>
 
             <input
@@ -182,7 +184,7 @@ function Register() {
               id="phone"
               name="phone"
               className="form-control"
-              placeholder="e.g. 072 345 6789"
+              placeholder={t("enterPhone")}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               required
@@ -194,14 +196,14 @@ function Register() {
         {/* Password */}
         <div className="form-group">
           <label className="form-label">
-            Password
+            {t("password")}
           </label>
 
           <input
             type="password"
             id="password"
             className="form-control"
-            placeholder="Min 6 characters"
+            placeholder={t("enterPassword")}
             minLength="6"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -215,7 +217,7 @@ function Register() {
             className="form-label"
             htmlFor="confirmPassword"
           >
-            Confirm password
+            {t("confirmYourPassword")}
           </label>
 
           <input
@@ -223,7 +225,7 @@ function Register() {
             id="confirmPassword"
             name="confirmPassword"
             className="form-control"
-            placeholder="Re-enter password"
+            placeholder={t("confirmYourPassword")}
             minLength="6"
             value={confirmPassword}
             onChange={(e) =>
@@ -240,22 +242,22 @@ function Register() {
           disabled={loading}
         >
           {loading
-            ? "Creating account..."
-            : "Create Patient Account"}
+            ? t("creatingAccount")
+            : t("registerButton")}
         </button>
 
       </form>
 
       {/* Login Link */}
       <div className="auth-footer">
-        Already have an account?{" "}
+        {t("alreadyAccount")}{" "}
 
         <button
           type="button"
           className="link-button"
           onClick={() => navigate("/login")}
         >
-          Login here
+          {t("loginHere")}
         </button>
       </div>
 
@@ -266,7 +268,7 @@ function Register() {
           className="back-link"
           onClick={() => navigate("/")}
         >
-          ← Back to home
+          ← {t("back")} {t("home")}
         </button>
       </div>
 

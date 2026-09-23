@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function SystemConfiguration() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState("");
@@ -75,7 +77,7 @@ function SystemConfiguration() {
       );
 
       setMessage(
-        "Configuration updated successfully!"
+        t("configurationUpdated")
       );
 
       setTimeout(() => {
@@ -88,7 +90,7 @@ function SystemConfiguration() {
       );
 
       setMessage(
-        "Unable to save configuration."
+        t("unableSaveConfiguration")
       );
 
       setTimeout(() => {
@@ -116,7 +118,7 @@ function SystemConfiguration() {
       <div className="topbar">
 
         <div className="topbar-brand">
-          KwaDlangezwa<span>Clinic</span>
+          {t("clinicName")}
         </div>
 
         <div className="topbar-user">
@@ -124,7 +126,7 @@ function SystemConfiguration() {
           <span>
             {user.full_name ||
               user.name ||
-              "Administrator"}
+              t("administrator")}
           </span>
 
           <div className="topbar-avatar">
@@ -142,7 +144,7 @@ function SystemConfiguration() {
       <div className="sidebar">
 
         <div className="sidebar-section">
-          Admin Menu
+          {t("adminMenu")}
         </div>
 
         {/* Dashboard */}
@@ -157,7 +159,7 @@ function SystemConfiguration() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </div>
 
@@ -173,7 +175,7 @@ function SystemConfiguration() {
           </span>
 
           <span>
-            Register Nurse
+            {t("registerNurse")}
           </span>
         </div>
 
@@ -189,7 +191,7 @@ function SystemConfiguration() {
           </span>
 
           <span>
-            System Config
+            {t("systemConfig")}
           </span>
         </div>
 
@@ -205,7 +207,7 @@ function SystemConfiguration() {
           </span>
 
           <span>
-            Reports
+            {t("reports")}
           </span>
         </div>
 
@@ -221,7 +223,7 @@ function SystemConfiguration() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </div>
 
@@ -237,17 +239,16 @@ function SystemConfiguration() {
         <div className="page-header">
 
           <div className="page-title">
-            System Configuration ⚙️
+            {t("systemConfiguration")} ⚙️
           </div>
 
           <div className="page-subtitle">
-            Manage clinic rules, appointment
-            slots, and nurse permissions
+            {t("systemConfigurationSubtitle")}
           </div>
 
         </div>
 
-        {/* SUCCESS MESSAGE */}
+        {/* SUCCESS / ERROR MESSAGE */}
         {message && (
           <div className="alert show alert-success">
             {message}
@@ -263,7 +264,7 @@ function SystemConfiguration() {
           <div className="card-header">
 
             <div className="card-title">
-              Clinic Settings
+              {t("clinicSettings")}
             </div>
 
           </div>
@@ -276,7 +277,7 @@ function SystemConfiguration() {
               <div className="form-group">
 
                 <label className="form-label">
-                  Daily Appointment Capacity
+                  {t("dailyAppointmentCapacity")}
                 </label>
 
                 <input
@@ -295,8 +296,9 @@ function SystemConfiguration() {
               <div className="form-group">
 
                 <label className="form-label">
-                  Appointment Slot Duration
-                  (minutes)
+                  {t("appointmentSlotDuration")}
+                  {" "}
+                  {t("minutesInBrackets")}
                 </label>
 
                 <input
@@ -316,7 +318,7 @@ function SystemConfiguration() {
               <div className="form-group">
 
                 <label className="form-label">
-                  Walk-in Limit Per Day
+                  {t("walkInLimitPerDay")}
                 </label>
 
                 <input
@@ -335,14 +337,14 @@ function SystemConfiguration() {
               <div className="form-group">
 
                 <label className="form-label">
-                  Restricted Walk-in Hours
+                  {t("restrictedWalkInHours")}
                 </label>
 
                 <input
                   type="text"
                   name="walkin_restriction"
                   className="form-control"
-                  placeholder="e.g. 11:30 - 12:30"
+                  placeholder={t("walkInTimeExample")}
                   value={
                     config.walkin_restriction
                   }
@@ -355,7 +357,7 @@ function SystemConfiguration() {
               <div className="form-group">
 
                 <label className="form-label">
-                  Nurse Permissions
+                  {t("nursePermissions")}
                 </label>
 
                 <select
@@ -368,17 +370,15 @@ function SystemConfiguration() {
                 >
 
                   <option value="basic">
-                    Basic (appointments only)
+                    {t("basicAppointmentsOnly")}
                   </option>
 
                   <option value="extended">
-                    Extended (appointments +
-                    walk-ins)
+                    {t("extendedAppointmentsWalkIns")}
                   </option>
 
                   <option value="full">
-                    Full (appointments,
-                    walk-ins, reports)
+                    {t("fullAppointmentsWalkInsReports")}
                   </option>
 
                 </select>
@@ -390,7 +390,7 @@ function SystemConfiguration() {
                 type="submit"
                 className="btn btn-primary"
               >
-                Save Configuration
+                {t("saveConfiguration")}
               </button>
 
             </form>
@@ -411,7 +411,7 @@ function SystemConfiguration() {
           <div className="card-header">
 
             <div className="card-title">
-              Current Configuration
+              {t("currentConfiguration")}
             </div>
 
           </div>
@@ -421,7 +421,7 @@ function SystemConfiguration() {
             <ul className="report-list">
 
               <li>
-                Daily Capacity:
+                {t("dailyCapacity")}:
 
                 <span>
                   {config.capacity}
@@ -429,16 +429,16 @@ function SystemConfiguration() {
               </li>
 
               <li>
-                Slot Duration:
+                {t("slotDuration")}:
 
                 <span>
                   {config.slot_duration}
                 </span>{" "}
-                minutes
+                {t("minutes")}
               </li>
 
               <li>
-                Walk-in Limit:
+                {t("walkInLimit")}:
 
                 <span>
                   {config.walkin_limit}
@@ -446,19 +446,27 @@ function SystemConfiguration() {
               </li>
 
               <li>
-                Restricted Hours:
+                {t("restrictedHours")}:
 
                 <span>
                   {config.walkin_restriction ||
-                    "None"}
+                    t("none")}
                 </span>
               </li>
 
               <li>
-                Nurse Permissions:
+                {t("nursePermissions")}:
 
                 <span>
-                  {config.nurse_permissions}
+                  {config.nurse_permissions === "basic"
+                    ? t("basic")
+                    : config.nurse_permissions ===
+                      "extended"
+                    ? t("extended")
+                    : config.nurse_permissions ===
+                      "full"
+                    ? t("full")
+                    : config.nurse_permissions}
                 </span>
               </li>
 

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function ManageAppointments() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [appointments, setAppointments] = useState([]);
@@ -146,9 +148,20 @@ function ManageAppointments() {
         "badge badge-pending";
     }
 
+    const translatedStatus = {
+      Pending: t("pending"),
+      Scheduled: t("scheduled"),
+      Completed: t("completed"),
+      Cancelled: t("cancelled"),
+      Rejected: t("rejected"),
+      "No-show": t("noShow"),
+    };
+
     return (
       <span className={badgeClass}>
-        {status || "Pending"}
+        {translatedStatus[status] ||
+          status ||
+          t("pending")}
       </span>
     );
   };
@@ -200,8 +213,17 @@ function ManageAppointments() {
         updatedAppointments
       );
 
+      const statusMessages = {
+        Scheduled: t("appointmentApprovedSuccessfully"),
+        Rejected: t("appointmentRejectedSuccessfully"),
+        Completed: t("appointmentCompletedSuccessfully"),
+        "No-show": t("appointmentNoShowSuccessfully"),
+        Cancelled: t("appointmentCancelledSuccessfully"),
+      };
+
       showMessage(
-        `Appointment ${newStatus.toLowerCase()} successfully.`,
+        statusMessages[newStatus] ||
+          `${t("appointment")} ${newStatus.toLowerCase()} ${t("successfully")}.`,
         "success"
       );
     } catch (error) {
@@ -211,7 +233,7 @@ function ManageAppointments() {
       );
 
       showMessage(
-        "Unable to update appointment.",
+        t("unableUpdateAppointment"),
         "danger"
       );
     }
@@ -326,8 +348,7 @@ function ManageAppointments() {
       <div className="topbar">
 
         <div className="topbar-brand">
-          KwaDlangezwa
-          <span>Clinic</span>
+          {t("clinicName")}
         </div>
 
         <div className="topbar-user">
@@ -335,7 +356,7 @@ function ManageAppointments() {
           <span>
             {user.full_name ||
               user.name ||
-              "Nurse"}
+              t("nurse")}
           </span>
 
           <div className="topbar-avatar">
@@ -346,7 +367,6 @@ function ManageAppointments() {
 
       </div>
 
-
       {/* =========================
           SIDEBAR
       ========================== */}
@@ -354,9 +374,8 @@ function ManageAppointments() {
       <div className="sidebar">
 
         <div className="sidebar-section">
-          Nurse Menu
+          {t("nurseMenu")}
         </div>
-
 
         {/* DASHBOARD */}
 
@@ -373,10 +392,9 @@ function ManageAppointments() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </button>
-
 
         {/* MANAGE APPOINTMENTS */}
 
@@ -393,10 +411,9 @@ function ManageAppointments() {
           </span>
 
           <span>
-            Manage Appointments
+            {t("manageAppointments")}
           </span>
         </button>
-
 
         {/* MANAGE WALK-INS */}
 
@@ -413,13 +430,11 @@ function ManageAppointments() {
           </span>
 
           <span>
-            Manage Walk-ins
+            {t("manageWalkIns")}
           </span>
         </button>
 
-
         <hr className="sidebar-divider" />
-
 
         {/* PROFILE */}
 
@@ -436,10 +451,9 @@ function ManageAppointments() {
           </span>
 
           <span>
-            My Profile
+            {t("myProfile")}
           </span>
         </button>
-
 
         {/* LOGOUT */}
 
@@ -452,12 +466,11 @@ function ManageAppointments() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </button>
 
       </div>
-
 
       {/* =========================
           MAIN CONTENT
@@ -470,16 +483,14 @@ function ManageAppointments() {
         <div className="page-header">
 
           <div className="page-title">
-            Manage Appointments
+            {t("manageAppointments")}
           </div>
 
           <div className="page-subtitle">
-            View and manage patient
-            appointments
+            {t("manageAppointmentsSubtitle")}
           </div>
 
         </div>
-
 
         {/* =========================
             MESSAGE
@@ -498,7 +509,6 @@ function ManageAppointments() {
           </div>
         )}
 
-
         {/* =========================
             APPOINTMENTS CARD
         ========================== */}
@@ -510,9 +520,8 @@ function ManageAppointments() {
           <div className="card-header">
 
             <div className="card-title">
-              Patient Appointments
+              {t("patientAppointments")}
             </div>
-
 
             {/* STATUS FILTER */}
 
@@ -531,31 +540,31 @@ function ManageAppointments() {
               >
 
                 <option value="">
-                  All Statuses
+                  {t("allStatuses")}
                 </option>
 
                 <option value="Pending">
-                  Pending
+                  {t("pending")}
                 </option>
 
                 <option value="Scheduled">
-                  Scheduled
+                  {t("scheduled")}
                 </option>
 
                 <option value="Completed">
-                  Completed
+                  {t("completed")}
                 </option>
 
                 <option value="Cancelled">
-                  Cancelled
+                  {t("cancelled")}
                 </option>
 
                 <option value="Rejected">
-                  Rejected
+                  {t("rejected")}
                 </option>
 
                 <option value="No-show">
-                  No-show
+                  {t("noShow")}
                 </option>
 
               </select>
@@ -563,7 +572,6 @@ function ManageAppointments() {
             </div>
 
           </div>
-
 
           {/* CARD BODY */}
 
@@ -576,11 +584,10 @@ function ManageAppointments() {
 
                 <div className="spinner"></div>
 
-                Loading appointments...
+                {t("loadingAppointments")}
 
               </div>
             )}
-
 
             {/* NO APPOINTMENTS */}
 
@@ -595,13 +602,33 @@ function ManageAppointments() {
 
                   <p>
                     {filterStatus
-                      ? `No ${filterStatus.toLowerCase()} appointments found.`
-                      : "No appointments found."}
+                      ? `${t("no")} ${t(
+                          filterStatus ===
+                            "Pending"
+                            ? "pending"
+                            : filterStatus ===
+                              "Scheduled"
+                            ? "scheduled"
+                            : filterStatus ===
+                              "Completed"
+                            ? "completed"
+                            : filterStatus ===
+                              "Cancelled"
+                            ? "cancelled"
+                            : filterStatus ===
+                              "Rejected"
+                            ? "rejected"
+                            : "noShow"
+                        )} ${t(
+                          "appointmentsFound"
+                        )}.`
+                      : t(
+                          "noAppointmentsFound"
+                        )}
                   </p>
 
                 </div>
               )}
-
 
             {/* APPOINTMENT TABLE */}
 
@@ -621,37 +648,36 @@ function ManageAppointments() {
                         </th>
 
                         <th>
-                          Patient
+                          {t("patient")}
                         </th>
 
                         <th>
-                          Service
+                          {t("service")}
                         </th>
 
                         <th>
-                          Department
+                          {t("department")}
                         </th>
 
                         <th>
-                          Date
+                          {t("date")}
                         </th>
 
                         <th>
-                          Time
+                          {t("time")}
                         </th>
 
                         <th>
-                          Status
+                          {t("status")}
                         </th>
 
                         <th>
-                          Actions
+                          {t("actions")}
                         </th>
 
                       </tr>
 
                     </thead>
-
 
                     <tbody>
 
@@ -672,7 +698,6 @@ function ManageAppointments() {
                               }
                             </td>
 
-
                             {/* PATIENT */}
 
                             <td>
@@ -680,7 +705,7 @@ function ManageAppointments() {
                               <strong>
                                 {appointment.patient_name ||
                                   appointment.full_name ||
-                                  "Unknown Patient"}
+                                  t("unknownPatient")}
                               </strong>
 
                               {appointment.patient_email && (
@@ -702,22 +727,19 @@ function ManageAppointments() {
 
                             </td>
 
-
                             {/* SERVICE */}
 
                             <td>
                               {appointment.service ||
-                                "General Consultation"}
+                                t("generalConsultation")}
                             </td>
-
 
                             {/* DEPARTMENT */}
 
                             <td>
                               {appointment.department ||
-                                "General"}
+                                t("general")}
                             </td>
-
 
                             {/* DATE */}
 
@@ -727,14 +749,12 @@ function ManageAppointments() {
                               )}
                             </td>
 
-
                             {/* TIME */}
 
                             <td>
                               {appointment.time ||
                                 "—"}
                             </td>
-
 
                             {/* STATUS */}
 
@@ -743,7 +763,6 @@ function ManageAppointments() {
                                 appointment.status
                               )}
                             </td>
-
 
                             {/* ACTIONS */}
 
@@ -756,6 +775,7 @@ function ManageAppointments() {
                                 {appointment.status ===
                                   "Pending" && (
                                   <>
+
                                     <button
                                       className="btn btn-success"
                                       onClick={() =>
@@ -764,7 +784,7 @@ function ManageAppointments() {
                                         )
                                       }
                                     >
-                                      Approve
+                                      {t("approve")}
                                     </button>
 
                                     <button
@@ -775,17 +795,18 @@ function ManageAppointments() {
                                         )
                                       }
                                     >
-                                      Reject
+                                      {t("reject")}
                                     </button>
+
                                   </>
                                 )}
-
 
                                 {/* SCHEDULED */}
 
                                 {appointment.status ===
                                   "Scheduled" && (
                                   <>
+
                                     <button
                                       className="btn btn-primary"
                                       onClick={() =>
@@ -794,7 +815,7 @@ function ManageAppointments() {
                                         )
                                       }
                                     >
-                                      Complete
+                                      {t("complete")}
                                     </button>
 
                                     <button
@@ -805,7 +826,7 @@ function ManageAppointments() {
                                         )
                                       }
                                     >
-                                      No-show
+                                      {t("noShow")}
                                     </button>
 
                                     <button
@@ -816,11 +837,11 @@ function ManageAppointments() {
                                         )
                                       }
                                     >
-                                      Cancel
+                                      {t("cancel")}
                                     </button>
+
                                   </>
                                 )}
-
 
                                 {/* COMPLETED */}
 
@@ -836,10 +857,9 @@ function ManageAppointments() {
                                         "600",
                                     }}
                                   >
-                                    ✓ Completed
+                                    ✓ {t("completed")}
                                   </span>
                                 )}
-
 
                                 {/* CANCELLED */}
 
@@ -855,10 +875,9 @@ function ManageAppointments() {
                                         "600",
                                     }}
                                   >
-                                    Cancelled
+                                    {t("cancelled")}
                                   </span>
                                 )}
-
 
                                 {/* REJECTED */}
 
@@ -874,10 +893,9 @@ function ManageAppointments() {
                                         "600",
                                     }}
                                   >
-                                    Rejected
+                                    {t("rejected")}
                                   </span>
                                 )}
-
 
                                 {/* NO-SHOW */}
 
@@ -893,7 +911,7 @@ function ManageAppointments() {
                                         "600",
                                     }}
                                   >
-                                    No-show
+                                    {t("noShow")}
                                   </span>
                                 )}
 

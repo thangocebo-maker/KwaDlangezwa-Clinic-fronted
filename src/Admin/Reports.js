@@ -4,9 +4,11 @@ import React, {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function Reports() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [weeklyReport, setWeeklyReport] = useState([]);
@@ -285,7 +287,7 @@ function Reports() {
           <span>
             {user.full_name ||
               user.name ||
-              "Admin"}
+              t("administrator")}
           </span>
 
           <div className="topbar-avatar">
@@ -303,7 +305,7 @@ function Reports() {
       <div className="sidebar">
 
         <div className="sidebar-section">
-          Admin Menu
+          {t("adminMenu")}
         </div>
 
         {/* Dashboard */}
@@ -319,7 +321,7 @@ function Reports() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </button>
 
@@ -336,7 +338,7 @@ function Reports() {
           </span>
 
           <span>
-            Register Nurse
+            {t("registerNurse")}
           </span>
         </button>
 
@@ -353,7 +355,7 @@ function Reports() {
           </span>
 
           <span>
-            System Config
+            {t("systemConfig")}
           </span>
         </button>
 
@@ -370,7 +372,7 @@ function Reports() {
           </span>
 
           <span>
-            Reports
+            {t("reports")}
           </span>
         </button>
 
@@ -387,7 +389,7 @@ function Reports() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </button>
 
@@ -403,12 +405,11 @@ function Reports() {
         <div className="page-header">
 
           <div className="page-title">
-            Reports & Analytics 📈
+            {t("reportsAnalytics")} 📈
           </div>
 
           <div className="page-subtitle">
-            Weekly and monthly clinic
-            performance overview
+            {t("reportsOverview")}
           </div>
 
         </div>
@@ -422,7 +423,7 @@ function Reports() {
           <div className="card-header">
 
             <div className="card-title">
-              Weekly Report
+              {t("weeklyReport")}
             </div>
 
           </div>
@@ -438,7 +439,7 @@ function Reports() {
 
                 <div className="spinner"></div>
 
-                Loading weekly data...
+                {t("loadingWeeklyData")}
 
               </div>
 
@@ -451,7 +452,7 @@ function Reports() {
                 </div>
 
                 <p>
-                  No weekly data available
+                  {t("noWeeklyData")}
                 </p>
 
               </div>
@@ -467,27 +468,27 @@ function Reports() {
                     <tr>
 
                       <th>
-                        Week
+                        {t("week")}
                       </th>
 
                       <th>
-                        Total Patients
+                        {t("totalPatients")}
                       </th>
 
                       <th>
-                        Appointments
+                        {t("appointments")}
                       </th>
 
                       <th>
-                        Walk-ins
+                        {t("walkIns")}
                       </th>
 
                       <th>
-                        Completed
+                        {t("completed")}
                       </th>
 
                       <th>
-                        Cancelled
+                        {t("cancelled")}
                       </th>
 
                     </tr>
@@ -554,7 +555,7 @@ function Reports() {
           <div className="card-header">
 
             <div className="card-title">
-              Monthly Report
+              {t("monthlyReport")}
             </div>
 
           </div>
@@ -570,7 +571,7 @@ function Reports() {
 
                 <div className="spinner"></div>
 
-                Loading monthly data...
+                {t("loadingMonthlyData")}
 
               </div>
 
@@ -583,7 +584,7 @@ function Reports() {
                 </div>
 
                 <p>
-                  No monthly data available
+                  {t("noMonthlyData")}
                 </p>
 
               </div>
@@ -599,27 +600,27 @@ function Reports() {
                     <tr>
 
                       <th>
-                        Month
+                        {t("month")}
                       </th>
 
                       <th>
-                        Total Patients
+                        {t("totalPatients")}
                       </th>
 
                       <th>
-                        Appointments
+                        {t("appointments")}
                       </th>
 
                       <th>
-                        Walk-ins
+                        {t("walkIns")}
                       </th>
 
                       <th>
-                        Completed
+                        {t("completed")}
                       </th>
 
                       <th>
-                        Cancelled
+                        {t("cancelled")}
                       </th>
 
                     </tr>
@@ -686,7 +687,7 @@ function Reports() {
           <div className="card-header">
 
             <div className="card-title">
-              Visual Analytics
+              {t("visualAnalytics")}
             </div>
 
           </div>
@@ -702,8 +703,7 @@ function Reports() {
                 </div>
 
                 <p>
-                  No data available for
-                  visual analytics
+                  {t("noVisualAnalyticsData")}
                 </p>
 
               </div>
@@ -795,7 +795,11 @@ function Reports() {
 
                               {/* APPOINTMENTS */}
                               <div
-                                title={`Appointments: ${month.appointments}`}
+                                title={`${t(
+                                  "appointments"
+                                )}: ${
+                                  month.appointments
+                                }`}
                                 style={{
                                   width:
                                     "18px",
@@ -814,7 +818,11 @@ function Reports() {
 
                               {/* WALK-INS */}
                               <div
-                                title={`Walk-ins: ${month.walkins}`}
+                                title={`${t(
+                                  "walkIns"
+                                )}: ${
+                                  month.walkins
+                                }`}
                                 style={{
                                   width:
                                     "18px",
@@ -833,7 +841,11 @@ function Reports() {
 
                               {/* COMPLETED */}
                               <div
-                                title={`Completed: ${month.completed}`}
+                                title={`${t(
+                                  "completed"
+                                )}: ${
+                                  month.completed
+                                }`}
                                 style={{
                                   width:
                                     "18px",
@@ -852,7 +864,11 @@ function Reports() {
 
                               {/* CANCELLED */}
                               <div
-                                title={`Cancelled: ${month.cancelled}`}
+                                title={`${t(
+                                  "cancelled"
+                                )}: ${
+                                  month.cancelled
+                                }`}
                                 style={{
                                   width:
                                     "18px",
@@ -928,7 +944,7 @@ function Reports() {
                       }}
                     ></span>
 
-                    Appointments
+                    {t("appointments")}
 
                   </span>
 
@@ -951,7 +967,7 @@ function Reports() {
                       }}
                     ></span>
 
-                    Walk-ins
+                    {t("walkIns")}
 
                   </span>
 
@@ -974,7 +990,7 @@ function Reports() {
                       }}
                     ></span>
 
-                    Completed
+                    {t("completed")}
 
                   </span>
 
@@ -997,7 +1013,7 @@ function Reports() {
                       }}
                     ></span>
 
-                    Cancelled
+                    {t("cancelled")}
 
                   </span>
 

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function Book() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
 
@@ -145,7 +147,7 @@ function Book() {
 
     if (!date) {
       setMessage(
-        "Please select a date."
+        t("selectDateRequired")
       );
       setMessageType("danger");
       return;
@@ -153,7 +155,7 @@ function Book() {
 
     if (!time) {
       setMessage(
-        "Please select an available time slot."
+        t("selectAvailableTime")
       );
       setMessageType("danger");
       return;
@@ -161,7 +163,7 @@ function Book() {
 
     if (!user) {
       setMessage(
-        "Please log in first."
+        t("loginFirst")
       );
       setMessageType("danger");
       return;
@@ -185,7 +187,7 @@ function Book() {
 
     if (alreadyBooked) {
       setMessage(
-        "This time slot has just been booked. Please select another available slot."
+        t("timeSlotJustBooked")
       );
 
       setMessageType("danger");
@@ -225,7 +227,7 @@ function Book() {
     );
 
     setMessage(
-      "Appointment confirmed successfully! It is now awaiting nurse approval."
+      t("appointmentConfirmedAwaitingApproval")
     );
 
     setMessageType("success");
@@ -242,7 +244,7 @@ function Book() {
   // Reschedule appointment
   const reschedule = (id) => {
     const newDate = prompt(
-      "Enter new date (YYYY-MM-DD):"
+      t("enterNewDate")
     );
 
     if (!newDate) {
@@ -250,7 +252,7 @@ function Book() {
     }
 
     const newTime = prompt(
-      "Enter new time (HH:MM):"
+      t("enterNewTime")
     );
 
     if (!newTime) {
@@ -276,7 +278,7 @@ function Book() {
 
     if (alreadyBooked) {
       setMessage(
-        "The selected new time slot is already booked."
+        t("newTimeSlotAlreadyBooked")
       );
 
       setMessageType("danger");
@@ -311,7 +313,7 @@ function Book() {
     );
 
     setMessage(
-      "Appointment rescheduled successfully. Awaiting nurse approval."
+      t("appointmentRescheduledAwaitingApproval")
     );
 
     setMessageType("success");
@@ -323,7 +325,7 @@ function Book() {
   const cancelBooking = (id) => {
     const confirmCancel =
       window.confirm(
-        "Are you sure you want to cancel this appointment?"
+        t("confirmCancelAppointment")
       );
 
     if (!confirmCancel) {
@@ -360,7 +362,7 @@ function Book() {
     );
 
     setMessage(
-      "Appointment cancelled successfully."
+      t("appointmentCancelledSuccessfully")
     );
 
     setMessageType("success");
@@ -426,9 +428,18 @@ function Book() {
         "badge badge-noshow";
     }
 
+    const translatedStatus = {
+      Pending: t("pending"),
+      Scheduled: t("scheduled"),
+      Completed: t("completed"),
+      Cancelled: t("cancelled"),
+      Rejected: t("rejected"),
+      "No-show": t("noShow")
+    };
+
     return (
       <span className={badgeClass}>
-        {status}
+        {translatedStatus[status] || status}
       </span>
     );
   };
@@ -463,7 +474,7 @@ function Book() {
           <span>
             {user.full_name ||
               user.name ||
-              "Patient"}
+              t("patient")}
           </span>
 
           <div className="topbar-avatar">
@@ -481,7 +492,7 @@ function Book() {
       <div className="sidebar">
 
         <div className="sidebar-section">
-          Patient Menu
+          {t("patientMenu")}
         </div>
 
 
@@ -499,7 +510,7 @@ function Book() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </button>
 
@@ -518,7 +529,7 @@ function Book() {
           </span>
 
           <span>
-            Book Appointment
+            {t("bookAppointment")}
           </span>
         </button>
 
@@ -537,7 +548,7 @@ function Book() {
           </span>
 
           <span>
-            My Appointments
+            {t("myAppointments")}
           </span>
         </button>
 
@@ -556,7 +567,7 @@ function Book() {
           </span>
 
           <span>
-            Profile
+            {t("profile")}
           </span>
         </button>
 
@@ -574,7 +585,7 @@ function Book() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </button>
 
@@ -590,12 +601,11 @@ function Book() {
         <div className="page-header">
 
           <div className="page-title">
-            Book Appointment
+            {t("bookAppointment")}
           </div>
 
           <div className="page-subtitle">
-            Choose an available date and time
-            for your clinic visit
+            {t("chooseDateTimeForVisit")}
           </div>
 
         </div>
@@ -625,7 +635,7 @@ function Book() {
           <div className="card-header">
 
             <div className="card-title">
-              New Appointment
+              {t("newAppointment")}
             </div>
 
           </div>
@@ -641,7 +651,7 @@ function Book() {
               <div className="form-group">
 
                 <label className="form-label">
-                  Select Date
+                  {t("selectDate")}
                 </label>
 
                 <input
@@ -669,7 +679,7 @@ function Book() {
                 <div className="form-group">
 
                   <label className="form-label">
-                    Time Slots
+                    {t("timeSlots")}
                   </label>
 
 
@@ -713,7 +723,7 @@ function Book() {
                         }}
                       ></span>
 
-                      Available
+                      {t("available")}
 
                     </div>
 
@@ -746,7 +756,7 @@ function Book() {
                         }}
                       ></span>
 
-                      Fully Booked
+                      {t("fullyBooked")}
 
                     </div>
 
@@ -757,8 +767,7 @@ function Book() {
                   {slotStatus.length === 0 ? (
 
                     <div className="alert show alert-danger">
-                      No time slots are available
-                      for this date.
+                      {t("noTimeSlotsAvailable")}
                     </div>
 
                   ) : (
@@ -857,8 +866,8 @@ function Book() {
                               }}
                             >
                               {slot.booked
-                                ? "Fully Booked"
-                                : "Available"}
+                                ? t("fullyBooked")
+                                : t("available")}
                             </div>
 
                           </button>
@@ -879,7 +888,7 @@ function Book() {
                 <div
                   className="alert show alert-success"
                 >
-                  Selected time:{" "}
+                  {t("selectedTime")}:{" "}
                   <strong>
                     {time}
                   </strong>
@@ -898,7 +907,7 @@ function Book() {
                   marginTop: "10px"
                 }}
               >
-                Confirm Appointment
+                {t("confirmAppointment")}
               </button>
 
             </form>
@@ -921,7 +930,7 @@ function Book() {
           <div className="card-header">
 
             <div className="card-title">
-              My Bookings
+              {t("myBookings")}
             </div>
 
           </div>
@@ -940,7 +949,7 @@ function Book() {
 
                 <div className="spinner"></div>
 
-                Loading...
+                {t("loading")}
 
               </div>
             )}
@@ -956,7 +965,7 @@ function Book() {
                   </div>
 
                   <p>
-                    No bookings yet
+                    {t("noBookingsYet")}
                   </p>
 
                 </div>
@@ -980,19 +989,19 @@ function Book() {
                         </th>
 
                         <th>
-                          Date
+                          {t("date")}
                         </th>
 
                         <th>
-                          Time
+                          {t("time")}
                         </th>
 
                         <th>
-                          Status
+                          {t("status")}
                         </th>
 
                         <th>
-                          Actions
+                          {t("actions")}
                         </th>
 
                       </tr>
@@ -1054,7 +1063,7 @@ function Book() {
                                       )
                                     }
                                   >
-                                    Reschedule
+                                    {t("reschedule")}
                                   </button>
 
 
@@ -1070,7 +1079,7 @@ function Book() {
                                       )
                                     }
                                   >
-                                    Cancel
+                                    {t("cancel")}
                                   </button>
 
                                 </>

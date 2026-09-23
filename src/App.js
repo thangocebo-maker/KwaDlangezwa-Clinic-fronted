@@ -5,6 +5,9 @@ import {
   Route,
 } from "react-router-dom";
 
+// Translation
+import { LanguageProvider } from "./translations/LanguageContext";
+
 // Home, Login and Register
 import Home from "./Home/Home";
 import Login from "./Login/Login";
@@ -33,99 +36,100 @@ import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <LanguageProvider>
+      <BrowserRouter>
+        <Routes>
 
-        {/* ================= HOME ================= */}
+          {/* ================= HOME ================= */}
 
-        <Route
-          path="/"
-          element={<Home />}
-        />
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
-        {/* ================= LOGIN ================= */}
+          {/* ================= LOGIN ================= */}
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+          <Route
+            path="/login"
+            element={<Login />}
+          />
 
-        {/* ================= PATIENT REGISTER ================= */}
+          {/* ================= PATIENT REGISTER ================= */}
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
+          <Route
+            path="/register"
+            element={<Register />}
+          />
 
-        {/* ================= PATIENT ================= */}
+          {/* ================= PATIENT ================= */}
 
-        <Route
-          path="/patient/dashboard"
-          element={<PatientDashboard />}
-        />
+          <Route
+            path="/patient/dashboard"
+            element={<PatientDashboard />}
+          />
 
-        <Route
-          path="/patient/book"
-          element={<Book />}
-        />
+          <Route
+            path="/patient/book"
+            element={<Book />}
+          />
 
-        <Route
-          path="/patient/appointments"
-          element={<MyAppointments />}
-        />
+          <Route
+            path="/patient/appointments"
+            element={<MyAppointments />}
+          />
 
-        <Route
-          path="/patient/profile"
-          element={<PatientProfile />}
-        />
+          <Route
+            path="/patient/profile"
+            element={<PatientProfile />}
+          />
 
-        {/* ================= NURSE ================= */}
+          {/* ================= NURSE ================= */}
 
-        <Route
-          path="/nurse/dashboard"
-          element={<NurseDashboard />}
-        />
+          <Route
+            path="/nurse/dashboard"
+            element={<NurseDashboard />}
+          />
 
-        <Route
-          path="/nurse/appointments"
-          element={<ManageAppointments />}
-        />
+          <Route
+            path="/nurse/appointments"
+            element={<ManageAppointments />}
+          />
 
-        <Route
-          path="/nurse/walkins"
-          element={<ManageWalkins />}
-        />
+          <Route
+            path="/nurse/walkins"
+            element={<ManageWalkins />}
+          />
 
-        <Route
-          path="/nurse/profile"
-          element={<NurseProfile />}
-        />
+          <Route
+            path="/nurse/profile"
+            element={<NurseProfile />}
+          />
 
-        {/* ================= ADMIN ================= */}
+          {/* ================= ADMIN ================= */}
 
-        <Route
-          path="/admin/dashboard"
-          element={<AdminDashboard />}
-        />
+          <Route
+            path="/admin/dashboard"
+            element={<AdminDashboard />}
+          />
 
-        {/* REGISTER NURSE */}
-        <Route
-          path="/admin/register-nurse"
-          element={<RegisterNurse />}
-        />
+          <Route
+            path="/admin/register-nurse"
+            element={<RegisterNurse />}
+          />
 
-        <Route
-          path="/admin/configuration"
-          element={<SystemConfiguration />}
-        />
+          <Route
+            path="/admin/configuration"
+            element={<SystemConfiguration />}
+          />
 
-        <Route
-          path="/admin/reports"
-          element={<Reports />}
-        />
+          <Route
+            path="/admin/reports"
+            element={<Reports />}
+          />
 
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </LanguageProvider>
   );
 }
 

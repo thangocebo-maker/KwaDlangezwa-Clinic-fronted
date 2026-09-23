@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function Profile() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -115,7 +117,7 @@ function Profile() {
       setEditing(false);
 
       setMessage(
-        "Profile updated successfully!"
+        t("profileUpdatedSuccessfully")
       );
       setMessageType("success");
     } catch (error) {
@@ -125,7 +127,7 @@ function Profile() {
       );
 
       setMessage(
-        "Failed to update profile."
+        t("profileUpdateFailed")
       );
       setMessageType("danger");
     }
@@ -160,7 +162,7 @@ function Profile() {
       {/* SIDEBAR */}
       <div className="sidebar">
         <div className="sidebar-section">
-          Patient Menu
+          {t("patientMenu")}
         </div>
 
         <button
@@ -170,7 +172,7 @@ function Profile() {
           }
         >
           <span>🏠</span>
-          <span>Dashboard</span>
+          <span>{t("dashboard")}</span>
         </button>
 
         <button
@@ -180,7 +182,7 @@ function Profile() {
           }
         >
           <span>📅</span>
-          <span>Book Appointment</span>
+          <span>{t("bookAppointment")}</span>
         </button>
 
         <button
@@ -190,7 +192,7 @@ function Profile() {
           }
         >
           <span>🗂</span>
-          <span>Appointments</span>
+          <span>{t("myAppointments")}</span>
         </button>
 
         <button
@@ -200,7 +202,7 @@ function Profile() {
           }
         >
           <span>👤</span>
-          <span>Profile</span>
+          <span>{t("profile")}</span>
         </button>
 
         <hr className="sidebar-divider" />
@@ -210,7 +212,7 @@ function Profile() {
           onClick={logout}
         >
           <span>🚪</span>
-          <span>Logout</span>
+          <span>{t("logout")}</span>
         </button>
       </div>
 
@@ -218,11 +220,11 @@ function Profile() {
       <div className="main-content">
 
         <div className="page-title">
-          Profile Details
+          {t("profileDetails")}
         </div>
 
         <div className="page-subtitle">
-          View and update your personal information
+          {t("profileDetailsSubtitle")}
         </div>
 
         <br />
@@ -244,7 +246,7 @@ function Profile() {
 
           <div className="card-header">
             <div className="card-title">
-              Patient Profile
+              {t("patientProfile")}
             </div>
 
             <button
@@ -254,40 +256,42 @@ function Profile() {
               }
             >
               {editing
-                ? "Close"
-                : "Edit Profile"}
+                ? t("close")
+                : t("editProfile")}
             </button>
           </div>
 
           <div className="card-body">
 
             <div className="profile-row">
-              <strong>Full Name:</strong>{" "}
+              <strong>{t("fullName")}:</strong>{" "}
               {fullName}
             </div>
 
             <div className="profile-row">
-              <strong>Email:</strong>{" "}
+              <strong>{t("email")}:</strong>{" "}
               {email}
             </div>
 
             <div className="profile-row">
-              <strong>Phone:</strong>{" "}
+              <strong>{t("phone")}:</strong>{" "}
               {phone || "-"}
             </div>
 
             <div className="profile-row">
-              <strong>Date of Birth:</strong>{" "}
+              <strong>{t("dateOfBirth")}:</strong>{" "}
               {dob || "-"}
             </div>
 
             <div className="profile-row">
-              <strong>Language:</strong>{" "}
-              {language}
+              <strong>{t("language")}:</strong>{" "}
+              {language === "isiZulu"
+                ? t("zuluName")
+                : t("englishName")}
             </div>
 
             <div className="profile-row">
-              <strong>Address:</strong>{" "}
+              <strong>{t("address")}:</strong>{" "}
               {address || "-"}
             </div>
 
@@ -300,7 +304,7 @@ function Profile() {
 
             <div className="card-header">
               <div className="card-title">
-                Edit Profile
+                {t("editProfile")}
               </div>
             </div>
 
@@ -310,7 +314,7 @@ function Profile() {
 
                 <div className="form-group">
                   <label className="form-label">
-                    Full Name
+                    {t("fullName")}
                   </label>
 
                   <input
@@ -327,7 +331,7 @@ function Profile() {
 
                 <div className="form-group">
                   <label className="form-label">
-                    Email
+                    {t("email")}
                   </label>
 
                   <input
@@ -344,7 +348,7 @@ function Profile() {
 
                 <div className="form-group">
                   <label className="form-label">
-                    Phone
+                    {t("phone")}
                   </label>
 
                   <input
@@ -361,7 +365,7 @@ function Profile() {
 
                 <div className="form-group">
                   <label className="form-label">
-                    Date of Birth
+                    {t("dateOfBirth")}
                   </label>
 
                   <input
@@ -378,7 +382,7 @@ function Profile() {
 
                 <div className="form-group">
                   <label className="form-label">
-                    Preferred Language
+                    {t("preferredLanguage")}
                   </label>
 
                   <select
@@ -391,18 +395,18 @@ function Profile() {
                     }
                   >
                     <option value="English">
-                      English
+                      {t("englishName")}
                     </option>
 
                     <option value="isiZulu">
-                      isiZulu
+                      {t("zuluName")}
                     </option>
                   </select>
                 </div>
 
                 <div className="form-group">
                   <label className="form-label">
-                    Address
+                    {t("address")}
                   </label>
 
                   <input
@@ -421,7 +425,7 @@ function Profile() {
                   type="submit"
                   className="btn btn-success"
                 >
-                  💾 Save Changes
+                  💾 {t("saveChanges")}
                 </button>
 
               </form>

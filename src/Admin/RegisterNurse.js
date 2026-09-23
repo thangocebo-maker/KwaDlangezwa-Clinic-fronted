@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function RegisterNurse() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
 
@@ -98,8 +100,7 @@ function RegisterNurse() {
     // Check password length
     if (password.length < 6) {
       setAlert({
-        message:
-          "Password must be at least 6 characters.",
+        message: t("passwordTooShort"),
         type: "danger",
       });
 
@@ -109,7 +110,7 @@ function RegisterNurse() {
     // Check passwords
     if (password !== confirmPassword) {
       setAlert({
-        message: "Passwords do not match.",
+        message: t("passwordsDoNotMatch"),
         type: "danger",
       });
 
@@ -150,8 +151,7 @@ function RegisterNurse() {
 
       if (emailExists) {
         setAlert({
-          message:
-            "An account with this email already exists.",
+          message: t("emailAlreadyExists"),
           type: "danger",
         });
 
@@ -174,8 +174,7 @@ function RegisterNurse() {
 
       if (staffIdExists) {
         setAlert({
-          message:
-            "A nurse with this Nurse/Staff ID already exists.",
+          message: t("staffIdExists"),
           type: "danger",
         });
 
@@ -220,8 +219,7 @@ function RegisterNurse() {
 
       // Success message
       setAlert({
-        message:
-          "Nurse account registered successfully!",
+        message: t("nurseRegisteredSuccessfully"),
         type: "success",
       });
 
@@ -247,8 +245,7 @@ function RegisterNurse() {
       );
 
       setAlert({
-        message:
-          "Unable to register nurse. Please try again.",
+        message: t("unableToRegisterNurse"),
         type: "danger",
       });
 
@@ -290,7 +287,7 @@ function RegisterNurse() {
           <span>
             {user.full_name ||
               user.name ||
-              "Administrator"}
+              t("administrator")}
           </span>
 
           <div className="topbar-avatar">
@@ -308,7 +305,7 @@ function RegisterNurse() {
       <div className="sidebar">
 
         <div className="sidebar-section">
-          Admin Menu
+          {t("adminMenu")}
         </div>
 
         {/* Dashboard */}
@@ -324,7 +321,7 @@ function RegisterNurse() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </div>
 
@@ -341,7 +338,7 @@ function RegisterNurse() {
           </span>
 
           <span>
-            Register Nurse
+            {t("registerNurse")}
           </span>
         </div>
 
@@ -358,7 +355,7 @@ function RegisterNurse() {
           </span>
 
           <span>
-            System Config
+            {t("systemConfig")}
           </span>
         </div>
 
@@ -375,7 +372,7 @@ function RegisterNurse() {
           </span>
 
           <span>
-            Reports
+            {t("reports")}
           </span>
         </div>
 
@@ -392,7 +389,7 @@ function RegisterNurse() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </div>
 
@@ -409,12 +406,11 @@ function RegisterNurse() {
         <div className="page-header">
 
           <div className="page-title">
-            Register Nurse 👩‍⚕️
+            {t("registerNurse")} 👩‍⚕️
           </div>
 
           <div className="page-subtitle">
-            Create a new nurse account for
-            KwaDlangezwa Clinic
+            {t("registerNurseDescription")}
           </div>
 
         </div>
@@ -444,7 +440,7 @@ function RegisterNurse() {
           <div className="card-header">
 
             <div className="card-title">
-              Nurse Account Details
+              {t("nurseAccountDetails")}
             </div>
 
           </div>
@@ -458,13 +454,13 @@ function RegisterNurse() {
               <div className="form-group">
 
                 <label className="form-label">
-                  Full Name
+                  {t("fullName")}
                 </label>
 
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="e.g. Thandi Mkhize"
+                  placeholder={t("nurseFullNamePlaceholder")}
                   value={fullName}
                   onChange={(event) =>
                     setFullName(event.target.value)
@@ -481,13 +477,13 @@ function RegisterNurse() {
                 <div className="form-group">
 
                   <label className="form-label">
-                    Email Address
+                    {t("email")}
                   </label>
 
                   <input
                     type="email"
                     className="form-control"
-                    placeholder="nurse@email.com"
+                    placeholder={t("nurseEmailPlaceholder")}
                     value={email}
                     onChange={(event) =>
                       setEmail(event.target.value)
@@ -500,13 +496,13 @@ function RegisterNurse() {
                 <div className="form-group">
 
                   <label className="form-label">
-                    Phone Number
+                    {t("phone")}
                   </label>
 
                   <input
                     type="tel"
                     className="form-control"
-                    placeholder="e.g. 072 345 6789"
+                    placeholder={t("enterPhone")}
                     value={phone}
                     onChange={(event) =>
                       setPhone(event.target.value)
@@ -525,13 +521,13 @@ function RegisterNurse() {
                 <div className="form-group">
 
                   <label className="form-label">
-                    Nurse/Staff ID
+                    {t("staffId")}
                   </label>
 
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="e.g. NUR001"
+                    placeholder={t("staffIdPlaceholder")}
                     value={staffId}
                     onChange={(event) =>
                       setStaffId(event.target.value)
@@ -544,7 +540,7 @@ function RegisterNurse() {
                 <div className="form-group">
 
                   <label className="form-label">
-                    Department
+                    {t("department")}
                   </label>
 
                   <select
@@ -557,31 +553,31 @@ function RegisterNurse() {
                   >
 
                     <option value="">
-                      Select Department
+                      {t("selectDepartment")}
                     </option>
 
                     <option value="General">
-                      General
+                      {t("general")}
                     </option>
 
                     <option value="Maternal">
-                      Maternal
+                      {t("maternal")}
                     </option>
 
                     <option value="Child Health">
-                      Child Health
+                      {t("childHealth")}
                     </option>
 
                     <option value="Chronic Care">
-                      Chronic Care
+                      {t("chronicCare")}
                     </option>
 
                     <option value="Emergency">
-                      Emergency
+                      {t("emergency")}
                     </option>
 
                     <option value="Other">
-                      Other
+                      {t("other")}
                     </option>
 
                   </select>
@@ -597,13 +593,13 @@ function RegisterNurse() {
                 <div className="form-group">
 
                   <label className="form-label">
-                    Password
+                    {t("password")}
                   </label>
 
                   <input
                     type="password"
                     className="form-control"
-                    placeholder="Minimum 6 characters"
+                    placeholder={t("minimumSixCharacters")}
                     minLength="6"
                     value={password}
                     onChange={(event) =>
@@ -617,13 +613,13 @@ function RegisterNurse() {
                 <div className="form-group">
 
                   <label className="form-label">
-                    Confirm Password
+                    {t("confirmPassword")}
                   </label>
 
                   <input
                     type="password"
                     className="form-control"
-                    placeholder="Re-enter password"
+                    placeholder={t("reEnterPassword")}
                     minLength="6"
                     value={confirmPassword}
                     onChange={(event) =>
@@ -643,13 +639,13 @@ function RegisterNurse() {
               <div className="form-group">
 
                 <label className="form-label">
-                  Account Role
+                  {t("accountRole")}
                 </label>
 
                 <input
                   type="text"
                   className="form-control"
-                  value="Nurse"
+                  value={t("nurse")}
                   readOnly
                 />
 
@@ -660,8 +656,7 @@ function RegisterNurse() {
                     color: "#666",
                   }}
                 >
-                  The account role is automatically
-                  set to Nurse.
+                  {t("nurseRoleAutomaticallySet")}
                 </small>
 
               </div>
@@ -683,8 +678,8 @@ function RegisterNurse() {
                   disabled={loading}
                 >
                   {loading
-                    ? "Registering Nurse..."
-                    : "Register Nurse"}
+                    ? t("registeringNurse")
+                    : t("registerNurse")}
                 </button>
 
                 <button
@@ -695,7 +690,7 @@ function RegisterNurse() {
                   }
                   disabled={loading}
                 >
-                  Cancel
+                  {t("cancel")}
                 </button>
 
               </div>
@@ -720,7 +715,7 @@ function RegisterNurse() {
           <div className="card-header">
 
             <div className="card-title">
-              Registered Nurses
+              {t("registeredNurses")}
             </div>
 
           </div>
@@ -735,7 +730,7 @@ function RegisterNurse() {
                   color: "#666",
                 }}
               >
-                No nurses have been registered yet.
+                {t("noNursesRegisteredYet")}
               </p>
 
             ) : (
@@ -765,7 +760,7 @@ function RegisterNurse() {
                             "1px solid #ddd",
                         }}
                       >
-                        Full Name
+                        {t("fullName")}
                       </th>
 
                       <th
@@ -776,7 +771,7 @@ function RegisterNurse() {
                             "1px solid #ddd",
                         }}
                       >
-                        Email
+                        {t("email")}
                       </th>
 
                       <th
@@ -787,7 +782,7 @@ function RegisterNurse() {
                             "1px solid #ddd",
                         }}
                       >
-                        Phone
+                        {t("phone")}
                       </th>
 
                       <th
@@ -798,7 +793,7 @@ function RegisterNurse() {
                             "1px solid #ddd",
                         }}
                       >
-                        Staff ID
+                        {t("staffId")}
                       </th>
 
                       <th
@@ -809,7 +804,7 @@ function RegisterNurse() {
                             "1px solid #ddd",
                         }}
                       >
-                        Department
+                        {t("department")}
                       </th>
 
                     </tr>

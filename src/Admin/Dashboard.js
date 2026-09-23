@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function AdminDashboard() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [appointments, setAppointments] = useState([]);
@@ -122,6 +124,32 @@ function AdminDashboard() {
     }
   };
 
+  // Translate appointment status
+  const getStatusText = (status) => {
+    switch (status) {
+      case "Scheduled":
+        return t("scheduled");
+
+      case "Completed":
+        return t("completed");
+
+      case "Pending":
+        return t("pending");
+
+      case "Cancelled":
+        return t("cancelled");
+
+      case "No-show":
+        return t("noShow");
+
+      case "Rejected":
+        return t("rejected");
+
+      default:
+        return t("pending");
+    }
+  };
+
   if (!user) {
     return null;
   }
@@ -142,7 +170,7 @@ function AdminDashboard() {
           <span>
             {user.full_name ||
               user.name ||
-              "Administrator"}
+              t("administrator")}
           </span>
 
           <div className="topbar-avatar">
@@ -158,7 +186,7 @@ function AdminDashboard() {
       <div className="sidebar">
 
         <div className="sidebar-section">
-          Admin Menu
+          {t("adminMenu")}
         </div>
 
         {/* Dashboard */}
@@ -173,7 +201,7 @@ function AdminDashboard() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </div>
 
@@ -189,7 +217,7 @@ function AdminDashboard() {
           </span>
 
           <span>
-            Register Nurse
+            {t("registerNurse")}
           </span>
         </div>
 
@@ -205,7 +233,7 @@ function AdminDashboard() {
           </span>
 
           <span>
-            System Config
+            {t("systemConfig")}
           </span>
         </div>
 
@@ -221,7 +249,7 @@ function AdminDashboard() {
           </span>
 
           <span>
-            Reports
+            {t("reports")}
           </span>
         </div>
 
@@ -237,7 +265,7 @@ function AdminDashboard() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </div>
 
@@ -253,12 +281,11 @@ function AdminDashboard() {
         <div className="page-header">
 
           <div className="page-title">
-            Clinic Overview 🏥
+            {t("clinicOverview")} 🏥
           </div>
 
           <div className="page-subtitle">
-            Consolidated view of appointments,
-            walk-ins, nurse activity, and urgent cases
+            {t("adminOverviewDescription")}
           </div>
 
         </div>
@@ -273,7 +300,7 @@ function AdminDashboard() {
           <div className="stat-card">
 
             <div className="stat-label">
-              Total Patients
+              {t("totalPatients")}
             </div>
 
             <div className="stat-value">
@@ -287,7 +314,7 @@ function AdminDashboard() {
           <div className="stat-card">
 
             <div className="stat-label">
-              Appointments
+              {t("appointments")}
             </div>
 
             <div className="stat-value primary">
@@ -300,7 +327,7 @@ function AdminDashboard() {
           <div className="stat-card">
 
             <div className="stat-label">
-              Walk-ins
+              {t("walkIns")}
             </div>
 
             <div className="stat-value warning">
@@ -313,7 +340,7 @@ function AdminDashboard() {
           <div className="stat-card">
 
             <div className="stat-label">
-              Completed
+              {t("completed")}
             </div>
 
             <div className="stat-value success">
@@ -332,7 +359,7 @@ function AdminDashboard() {
           <div className="stat-card">
 
             <div className="stat-label">
-              Cancelled / No-shows
+              {t("cancelledNoShows")}
             </div>
 
             <div className="stat-value danger">
@@ -353,7 +380,7 @@ function AdminDashboard() {
           <div className="stat-card">
 
             <div className="stat-label">
-              Nurses Active
+              {t("nursesActive")}
             </div>
 
             <div className="stat-value">
@@ -378,7 +405,7 @@ function AdminDashboard() {
           <div className="card-header">
 
             <div className="card-title">
-              Nurse Activity
+              {t("nurseActivity")}
             </div>
 
           </div>
@@ -394,8 +421,7 @@ function AdminDashboard() {
                 </div>
 
                 <p>
-                  No nurses are registered
-                  in the system.
+                  {t("noNursesRegistered")}
                 </p>
 
               </div>
@@ -437,7 +463,7 @@ function AdminDashboard() {
                       👩‍⚕️{" "}
                       {nurse.full_name ||
                         nurse.name ||
-                        "Nurse"}
+                        t("nurse")}
                     </div>
 
                     <div
@@ -449,7 +475,7 @@ function AdminDashboard() {
                       }}
                     >
                       {nurse.department ||
-                        "General Department"}
+                        t("generalDepartment")}
                     </div>
 
                   </div>
@@ -473,8 +499,7 @@ function AdminDashboard() {
           <div className="card-header">
 
             <div className="card-title">
-              Pending & High Priority
-              Appointments
+              {t("pendingHighPriorityAppointments")}
             </div>
 
           </div>
@@ -495,8 +520,7 @@ function AdminDashboard() {
                 </div>
 
                 <p>
-                  No pending or urgent
-                  appointments right now!
+                  {t("noUrgentAppointments")}
                 </p>
 
               </div>
@@ -516,23 +540,23 @@ function AdminDashboard() {
                       </th>
 
                       <th>
-                        Patient
+                        {t("patient")}
                       </th>
 
                       <th>
-                        Service
+                        {t("service")}
                       </th>
 
                       <th>
-                        Status
+                        {t("status")}
                       </th>
 
                       <th>
-                        Type
+                        {t("type")}
                       </th>
 
                       <th>
-                        Date
+                        {t("date")}
                       </th>
 
                     </tr>
@@ -556,12 +580,12 @@ function AdminDashboard() {
 
                           <td>
                             {appointment.patient_name ||
-                              "Unknown Patient"}
+                              t("unknownPatient")}
                           </td>
 
                           <td>
                             {appointment.service ||
-                              "General Consultation"}
+                              t("generalConsultation")}
                           </td>
 
                           <td>
@@ -571,15 +595,16 @@ function AdminDashboard() {
                                 appointment.status
                               )}
                             >
-                              {appointment.status ||
-                                "Pending"}
+                              {getStatusText(
+                                appointment.status
+                              )}
                             </span>
 
                           </td>
 
                           <td>
                             {appointment.type ||
-                              "Booked"}
+                              t("booked")}
                           </td>
 
                           <td>

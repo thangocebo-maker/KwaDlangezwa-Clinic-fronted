@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [appointments, setAppointments] = useState([]);
@@ -171,9 +173,22 @@ function Dashboard() {
         "badge badge-scheduled";
     }
 
+    const translatedStatus = {
+      Scheduled: t("scheduled"),
+      Completed: t("completed"),
+      Cancelled: t("cancelled"),
+      "No-show": t("noShow"),
+      Rejected: t("rejected"),
+      Waiting: t("waiting"),
+      "In Progress": t("inProgress"),
+      Pending: t("pending"),
+    };
+
     return (
       <span className={badgeClass}>
-        {status || "Pending"}
+        {translatedStatus[status] ||
+          status ||
+          t("pending")}
       </span>
     );
   };
@@ -213,29 +228,32 @@ function Dashboard() {
     <>
       {/* TOPBAR */}
       <div className="topbar">
+
         <div className="topbar-brand">
-          KwaDlangezwa
-          <span>Clinic</span>
+          {t("clinicName")}
         </div>
 
         <div className="topbar-user">
+
           <span>
             {user.full_name ||
               user.name ||
-              "Nurse"}
+              t("nurse")}
           </span>
 
           <div className="topbar-avatar">
             👩‍⚕️
           </div>
+
         </div>
+
       </div>
 
       {/* SIDEBAR */}
       <div className="sidebar">
 
         <div className="sidebar-section">
-          Nurse Menu
+          {t("nurseMenu")}
         </div>
 
         {/* DASHBOARD */}
@@ -250,7 +268,7 @@ function Dashboard() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </button>
 
@@ -268,11 +286,11 @@ function Dashboard() {
           </span>
 
           <span>
-            Manage Appointments
+            {t("manageAppointments")}
           </span>
         </button>
 
-        {/* MANAGE WALK-INS - ADDED ONLY */}
+        {/* MANAGE WALK-INS */}
         <button
           className="sidebar-item"
           onClick={() =>
@@ -286,7 +304,7 @@ function Dashboard() {
           </span>
 
           <span>
-            Manage Walk-ins
+            {t("manageWalkIns")}
           </span>
         </button>
 
@@ -306,7 +324,7 @@ function Dashboard() {
           </span>
 
           <span>
-            My Profile
+            {t("myProfile")}
           </span>
         </button>
 
@@ -320,7 +338,7 @@ function Dashboard() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </button>
 
@@ -333,13 +351,11 @@ function Dashboard() {
         <div className="page-header">
 
           <div className="page-title">
-            Nurse Dashboard
+            {t("nurseDashboard")}
           </div>
 
           <div className="page-subtitle">
-            Manage appointments,
-            walk-ins, reports,
-            and clinic activities
+            {t("nurseDashboardSubtitle")}
           </div>
 
         </div>
@@ -349,8 +365,9 @@ function Dashboard() {
 
           {/* TOTAL PATIENTS */}
           <div className="stat-card">
+
             <div className="stat-label">
-              Total Patients
+              {t("totalPatients")}
             </div>
 
             <div className="stat-value">
@@ -358,12 +375,14 @@ function Dashboard() {
                 ? "—"
                 : stats.total}
             </div>
+
           </div>
 
           {/* SCHEDULED */}
           <div className="stat-card">
+
             <div className="stat-label">
-              Scheduled Appointments
+              {t("scheduledAppointments")}
             </div>
 
             <div className="stat-value primary">
@@ -371,12 +390,14 @@ function Dashboard() {
                 ? "—"
                 : stats.scheduled}
             </div>
+
           </div>
 
           {/* WALK-INS */}
           <div className="stat-card">
+
             <div className="stat-label">
-              Walk-in Patients
+              {t("walkInPatients")}
             </div>
 
             <div className="stat-value warning">
@@ -384,12 +405,14 @@ function Dashboard() {
                 ? "—"
                 : stats.walkins}
             </div>
+
           </div>
 
           {/* COMPLETED */}
           <div className="stat-card">
+
             <div className="stat-label">
-              Completed
+              {t("completed")}
             </div>
 
             <div className="stat-value success">
@@ -397,12 +420,14 @@ function Dashboard() {
                 ? "—"
                 : stats.completed}
             </div>
+
           </div>
 
           {/* CANCELLED */}
           <div className="stat-card">
+
             <div className="stat-label">
-              Cancelled / No-shows
+              {t("cancelledNoShows")}
             </div>
 
             <div className="stat-value danger">
@@ -410,6 +435,7 @@ function Dashboard() {
                 ? "—"
                 : stats.cancelled}
             </div>
+
           </div>
 
         </div>
@@ -420,8 +446,7 @@ function Dashboard() {
           <div className="card-header">
 
             <div className="card-title">
-              Clinic Flow — Reports &
-              Daily Schedule
+              {t("clinicFlowReportsSchedule")}
             </div>
 
           </div>
@@ -432,7 +457,7 @@ function Dashboard() {
             <ul className="report-list">
 
               <li>
-                Total Patients:{" "}
+                {t("totalPatients")}:{" "}
                 <span>
                   {loading
                     ? "—"
@@ -441,7 +466,7 @@ function Dashboard() {
               </li>
 
               <li>
-                Scheduled Appointments:{" "}
+                {t("scheduledAppointments")}:{" "}
                 <span>
                   {loading
                     ? "—"
@@ -450,7 +475,7 @@ function Dashboard() {
               </li>
 
               <li>
-                Walk-ins Registered:{" "}
+                {t("walkInsRegistered")}:{" "}
                 <span>
                   {loading
                     ? "—"
@@ -459,7 +484,7 @@ function Dashboard() {
               </li>
 
               <li>
-                Completed Visits:{" "}
+                {t("completedVisits")}:{" "}
                 <span>
                   {loading
                     ? "—"
@@ -468,7 +493,7 @@ function Dashboard() {
               </li>
 
               <li>
-                Cancelled / No-shows:{" "}
+                {t("cancelledNoShows")}:{" "}
                 <span>
                   {loading
                     ? "—"
@@ -481,9 +506,11 @@ function Dashboard() {
             {/* LOADING */}
             {loading && (
               <div className="loading">
+
                 <div className="spinner"></div>
 
-                Loading schedule...
+                {t("loadingSchedule")}
+
               </div>
             )}
 
@@ -498,9 +525,7 @@ function Dashboard() {
                   </div>
 
                   <p>
-                    No appointments or
-                    walk-in patients
-                    found.
+                    {t("noAppointmentsOrWalkIns")}
                   </p>
 
                 </div>
@@ -515,6 +540,7 @@ function Dashboard() {
                   <table>
 
                     <thead>
+
                       <tr>
 
                         <th>
@@ -522,34 +548,35 @@ function Dashboard() {
                         </th>
 
                         <th>
-                          Patient
+                          {t("patient")}
                         </th>
 
                         <th>
-                          Service
+                          {t("service")}
                         </th>
 
                         <th>
-                          Status
+                          {t("status")}
                         </th>
 
                         <th>
-                          Type
+                          {t("type")}
                         </th>
 
                         <th>
-                          Queue #
+                          {t("queueNumber")}
                         </th>
 
                         <th>
-                          Date
+                          {t("date")}
                         </th>
 
                         <th>
-                          Time
+                          {t("time")}
                         </th>
 
                       </tr>
+
                     </thead>
 
                     <tbody>
@@ -573,13 +600,13 @@ function Dashboard() {
                             <td>
                               <strong>
                                 {appointment.patient_name ||
-                                  "Unknown Patient"}
+                                  t("unknownPatient")}
                               </strong>
                             </td>
 
                             <td>
                               {appointment.service ||
-                                "General Consultation"}
+                                t("generalConsultation")}
                             </td>
 
                             <td>
@@ -590,7 +617,7 @@ function Dashboard() {
 
                             <td>
                               {appointment.type ||
-                                "Booked"}
+                                t("booked")}
                             </td>
 
                             <td>
@@ -631,13 +658,13 @@ function Dashboard() {
                             <td>
                               <strong>
                                 {walkin.patient_name ||
-                                  "Unknown Patient"}
+                                  t("unknownPatient")}
                               </strong>
                             </td>
 
                             <td>
                               {walkin.department ||
-                                "General"}
+                                t("general")}
                             </td>
 
                             <td>
@@ -648,7 +675,7 @@ function Dashboard() {
 
                             <td>
                               <span className="badge badge-pending">
-                                🚶 Walk-in
+                                🚶 {t("walkIn")}
                               </span>
                             </td>
 

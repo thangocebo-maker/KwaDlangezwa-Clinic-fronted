@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function Login() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,7 +65,7 @@ function Login() {
       navigate("/admin/dashboard");
     } else {
       setAlert({
-        message: "User role is not recognised.",
+        message: t("accessDenied"),
         type: "danger",
       });
 
@@ -144,7 +146,7 @@ function Login() {
         );
 
         setAlert({
-          message: "Login successful! Redirecting...",
+          message: t("loginSuccessful"),
           type: "success",
         });
 
@@ -157,7 +159,7 @@ function Login() {
 
       // Login failed
       setAlert({
-        message: "Invalid email or password.",
+        message: t("loginError"),
         type: "danger",
       });
 
@@ -166,7 +168,7 @@ function Login() {
       console.error("Login error:", error);
 
       setAlert({
-        message: "Something went wrong. Please try again.",
+        message: t("somethingWentWrong"),
         type: "danger",
       });
 
@@ -190,20 +192,18 @@ function Login() {
           </h1>
 
           <p>
-            Log in to your account
+            {t("loginWelcome")}
           </p>
         </div>
 
         {/* Title */}
         <h2 className="auth-title">
-          Welcome back 👋
+          {t("loginTitle")} 👋
         </h2>
 
         {/* Alert */}
         {alert.message && (
-          <div
-            className={`alert ${alert.type}`}
-          >
+          <div className={`alert ${alert.type}`}>
             {alert.message}
           </div>
         )}
@@ -217,14 +217,14 @@ function Login() {
           {/* Email / Phone */}
           <div className="form-group">
             <label className="form-label">
-              Email or phone number
+              {t("email")} / {t("phone")}
             </label>
 
             <input
               type="text"
               id="email"
               className="form-control"
-              placeholder="your@email.com or your phone number"
+              placeholder={`${t("email")} / ${t("phone")}`}
               value={email}
               onChange={(e) =>
                 setEmail(e.target.value)
@@ -236,14 +236,14 @@ function Login() {
           {/* Password */}
           <div className="form-group">
             <label className="form-label">
-              Password
+              {t("password")}
             </label>
 
             <input
               type="password"
               id="password"
               className="form-control"
-              placeholder="Enter your password"
+              placeholder={t("enterPassword")}
               value={password}
               onChange={(e) =>
                 setPassword(e.target.value)
@@ -259,15 +259,15 @@ function Login() {
             disabled={loading}
           >
             {loading
-              ? "Logging in..."
-              : "Login"}
+              ? t("loggingIn")
+              : t("loginButton")}
           </button>
 
         </form>
 
         {/* Register */}
         <div className="auth-footer">
-          Don't have an account?{" "}
+          {t("noAccount")}{" "}
 
           <button
             type="button"
@@ -276,7 +276,7 @@ function Login() {
               navigate("/register")
             }
           >
-            Register here
+            {t("register")}
           </button>
         </div>
 
@@ -289,7 +289,7 @@ function Login() {
               navigate("/")
             }
           >
-            ← Back to home
+            ← {t("back")} {t("home")}
           </button>
         </div>
 

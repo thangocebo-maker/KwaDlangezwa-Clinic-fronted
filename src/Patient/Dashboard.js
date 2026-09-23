@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [appointments, setAppointments] = useState([]);
@@ -242,9 +244,22 @@ function Dashboard() {
         "badge badge-scheduled";
     }
 
+    const translatedStatus = {
+      Pending: t("pending"),
+      Scheduled: t("scheduled"),
+      Completed: t("completed"),
+      Cancelled: t("cancelled"),
+      Rejected: t("rejected"),
+      "No-show": t("noShow"),
+      Waiting: t("waiting"),
+      "In Progress": t("inProgress"),
+    };
+
     return (
       <span className={badgeClass}>
-        {status || "Pending"}
+        {translatedStatus[status] ||
+          status ||
+          t("pending")}
       </span>
     );
   };
@@ -264,7 +279,7 @@ function Dashboard() {
   const firstName =
     user.full_name?.split(" ")[0] ||
     user.name?.split(" ")[0] ||
-    "Patient";
+    t("patient");
 
   const recentAppointments =
     appointments.slice(0, 5);
@@ -281,6 +296,20 @@ function Dashboard() {
       ? walkins[walkins.length - 1]
       : null;
 
+  const translatedDepartment = {
+    General: t("general"),
+    Dental: t("dental"),
+    Maternal: t("maternal"),
+    "Child Health": t("childHealth"),
+    Chronic: t("chronicCare"),
+  };
+
+  const translatedPriority = {
+    Normal: t("normal"),
+    Urgent: t("urgent"),
+    Emergency: t("emergency"),
+  };
+
   return (
     <>
       {/* TOPBAR */}
@@ -294,7 +323,7 @@ function Dashboard() {
           <span>
             {user.full_name ||
               user.name ||
-              "Patient"}
+              t("patient")}
           </span>
 
           <div className="topbar-avatar">
@@ -306,7 +335,7 @@ function Dashboard() {
       {/* SIDEBAR */}
       <div className="sidebar">
         <div className="sidebar-section">
-          Patient Menu
+          {t("patientMenu")}
         </div>
 
         <button
@@ -322,7 +351,7 @@ function Dashboard() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </button>
 
@@ -337,7 +366,7 @@ function Dashboard() {
           </span>
 
           <span>
-            Book Appointment
+            {t("bookAppointment")}
           </span>
         </button>
 
@@ -354,7 +383,7 @@ function Dashboard() {
           </span>
 
           <span>
-            My Appointments
+            {t("myAppointments")}
           </span>
         </button>
 
@@ -371,7 +400,7 @@ function Dashboard() {
           </span>
 
           <span>
-            Profile
+            {t("profile")}
           </span>
         </button>
 
@@ -386,7 +415,7 @@ function Dashboard() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </button>
       </div>
@@ -400,12 +429,11 @@ function Dashboard() {
             className="page-title"
             id="welcome-title"
           >
-            Welcome, {firstName}! 👋
+            {t("welcomePatient")}, {firstName}! 👋
           </div>
 
           <div className="page-subtitle">
-            Welcome back! Here is your clinic
-            appointment and walk-in overview.
+            {t("patientDashboardSubtitle")}
           </div>
         </div>
 
@@ -415,7 +443,7 @@ function Dashboard() {
           {/* Total Visits */}
           <div className="stat-card">
             <div className="stat-label">
-              Total Visits
+              {t("totalVisits")}
             </div>
 
             <div className="stat-value">
@@ -428,7 +456,7 @@ function Dashboard() {
           {/* Upcoming Appointments */}
           <div className="stat-card">
             <div className="stat-label">
-              Upcoming Appointments
+              {t("upcomingAppointments")}
             </div>
 
             <div className="stat-value warning">
@@ -441,7 +469,7 @@ function Dashboard() {
           {/* Walk-in Visits */}
           <div className="stat-card">
             <div className="stat-label">
-              Walk-in Visits
+              {t("walkInVisits")}
             </div>
 
             <div className="stat-value warning">
@@ -454,7 +482,7 @@ function Dashboard() {
           {/* Completed */}
           <div className="stat-card">
             <div className="stat-label">
-              Completed Visits
+              {t("completedVisits")}
             </div>
 
             <div className="stat-value success">
@@ -467,7 +495,7 @@ function Dashboard() {
           {/* Cancelled / No-shows */}
           <div className="stat-card">
             <div className="stat-label">
-              Cancelled / No-shows
+              {t("cancelledNoShows")}
             </div>
 
             <div className="stat-value danger">
@@ -485,7 +513,7 @@ function Dashboard() {
 
             <div className="card-header">
               <div className="card-title">
-                Current Walk-in
+                {t("currentWalkIn")}
               </div>
             </div>
 
@@ -508,7 +536,7 @@ function Dashboard() {
                       marginBottom: "6px",
                     }}
                   >
-                    Queue Number
+                    {t("queueNumber")}
                   </div>
 
                   <div
@@ -530,7 +558,7 @@ function Dashboard() {
                       marginBottom: "6px",
                     }}
                   >
-                    Department
+                    {t("department")}
                   </div>
 
                   <div
@@ -539,7 +567,10 @@ function Dashboard() {
                       fontWeight: "600",
                     }}
                   >
-                    {currentWalkin.department ||
+                    {translatedDepartment[
+                      currentWalkin.department
+                    ] ||
+                      currentWalkin.department ||
                       "—"}
                   </div>
                 </div>
@@ -552,7 +583,7 @@ function Dashboard() {
                       marginBottom: "6px",
                     }}
                   >
-                    Priority
+                    {t("priority")}
                   </div>
 
                   <div
@@ -561,8 +592,11 @@ function Dashboard() {
                       fontWeight: "600",
                     }}
                   >
-                    {currentWalkin.priority ||
-                      "Normal"}
+                    {translatedPriority[
+                      currentWalkin.priority
+                    ] ||
+                      currentWalkin.priority ||
+                      t("normal")}
                   </div>
                 </div>
 
@@ -574,7 +608,7 @@ function Dashboard() {
                       marginBottom: "6px",
                     }}
                   >
-                    Current Status
+                    {t("currentStatus")}
                   </div>
 
                   <div>
@@ -601,32 +635,28 @@ function Dashboard() {
                 {currentWalkin.status ===
                   "Waiting" && (
                   <span>
-                    You are currently waiting
-                    in the clinic queue.
+                    {t("waitingInClinicQueue")}
                   </span>
                 )}
 
                 {currentWalkin.status ===
                   "In Progress" && (
                   <span>
-                    You are currently being
-                    attended to by clinic staff.
+                    {t("beingAttendedByStaff")}
                   </span>
                 )}
 
                 {currentWalkin.status ===
                   "Completed" && (
                   <span>
-                    Your clinic visit has
-                    been completed.
+                    {t("visitCompleted")}
                   </span>
                 )}
 
                 {currentWalkin.status ===
                   "No-show" && (
                   <span>
-                    This walk-in visit has
-                    been marked as a no-show.
+                    {t("walkInNoShow")}
                   </span>
                 )}
               </div>
@@ -641,7 +671,7 @@ function Dashboard() {
           <div className="card-header">
 
             <div className="card-title">
-              Recent Appointments
+              {t("recentAppointments")}
             </div>
 
             <button
@@ -652,7 +682,7 @@ function Dashboard() {
                 )
               }
             >
-              View All
+              {t("viewAll")}
             </button>
 
           </div>
@@ -667,8 +697,7 @@ function Dashboard() {
               <div className="loading">
                 <div className="spinner"></div>
 
-                Loading your
-                appointments...
+                {t("loadingYourAppointments")}
               </div>
             )}
 
@@ -682,8 +711,7 @@ function Dashboard() {
                   </div>
 
                   <p>
-                    You don’t have any
-                    appointments yet
+                    {t("noAppointmentsYet")}
                   </p>
 
                   <button
@@ -694,7 +722,7 @@ function Dashboard() {
                       )
                     }
                   >
-                    📅 Book an Appointment
+                    📅 {t("bookAnAppointment")}
                   </button>
 
                 </div>
@@ -710,23 +738,23 @@ function Dashboard() {
                     <thead>
                       <tr>
                         <th>
-                          Service
+                          {t("service")}
                         </th>
 
                         <th>
-                          Doctor
+                          {t("doctor")}
                         </th>
 
                         <th>
-                          Status
+                          {t("status")}
                         </th>
 
                         <th>
-                          Date
+                          {t("date")}
                         </th>
 
                         <th>
-                          Time
+                          {t("time")}
                         </th>
                       </tr>
                     </thead>
@@ -744,7 +772,7 @@ function Dashboard() {
                             <td
                               title={
                                 appointment.service ||
-                                "Clinic Appointment"
+                                t("clinicAppointment")
                               }
                               style={{
                                 maxWidth:
@@ -758,12 +786,12 @@ function Dashboard() {
                               }}
                             >
                               {appointment.service ||
-                                "Clinic Appointment"}
+                                t("clinicAppointment")}
                             </td>
 
                             <td>
                               {appointment.doctor ||
-                                "Clinic Staff"}
+                                t("clinicStaff")}
                             </td>
 
                             <td>
@@ -835,7 +863,7 @@ function Dashboard() {
               )
             }
           >
-            📅 Book a New Appointment
+            📅 {t("bookNewAppointment")}
           </button>
 
           <button
@@ -850,7 +878,7 @@ function Dashboard() {
               )
             }
           >
-            🗂 View My Appointments
+            🗂 {t("viewMyAppointments")}
           </button>
 
         </div>

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../translations/LanguageContext";
 
 function Profile() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -96,7 +98,7 @@ function Profile() {
 
     if (!file.type.startsWith("image/")) {
       setMessage(
-        "Please select a valid image file."
+        t("invalidImageFile")
       );
 
       setMessageType("danger");
@@ -146,7 +148,7 @@ function Profile() {
 
       if (emailExists) {
         setMessage(
-          "Another account is already using this email address."
+          t("emailAlreadyInUse")
         );
 
         setMessageType("danger");
@@ -215,7 +217,7 @@ function Profile() {
       setEditing(false);
 
       setMessage(
-        "Nurse profile updated successfully!"
+        t("nurseProfileUpdated")
       );
 
       setMessageType("success");
@@ -227,7 +229,7 @@ function Profile() {
       );
 
       setMessage(
-        "Failed to update profile. Please try again."
+        t("profileUpdateFailed")
       );
 
       setMessageType("danger");
@@ -270,7 +272,7 @@ function Profile() {
 
           <span>
             {fullName ||
-              "Nurse"}
+              t("nurse")}
           </span>
 
           <div className="topbar-avatar">
@@ -278,7 +280,7 @@ function Profile() {
             {avatar ? (
               <img
                 src={avatar}
-                alt="Nurse Avatar"
+                alt={t("nurseAvatar")}
                 style={{
                   width: "36px",
                   height: "36px",
@@ -302,7 +304,6 @@ function Profile() {
 
       </div>
 
-
       {/* =========================
           SIDEBAR
       ========================== */}
@@ -310,9 +311,8 @@ function Profile() {
       <div className="sidebar">
 
         <div className="sidebar-section">
-          Nurse Menu
+          {t("nurseMenu")}
         </div>
-
 
         {/* Dashboard */}
 
@@ -329,10 +329,9 @@ function Profile() {
           </span>
 
           <span>
-            Dashboard
+            {t("dashboard")}
           </span>
         </button>
-
 
         {/* Manage Appointments */}
 
@@ -349,10 +348,9 @@ function Profile() {
           </span>
 
           <span>
-            Manage Appointments
+            {t("manageAppointments")}
           </span>
         </button>
-
 
         {/* Manage Walk-ins */}
 
@@ -369,13 +367,11 @@ function Profile() {
           </span>
 
           <span>
-            Manage Walk-ins
+            {t("manageWalkIns")}
           </span>
         </button>
 
-
         <hr className="sidebar-divider" />
-
 
         {/* Profile */}
 
@@ -392,10 +388,9 @@ function Profile() {
           </span>
 
           <span>
-            My Profile
+            {t("myProfile")}
           </span>
         </button>
-
 
         {/* Logout */}
 
@@ -410,12 +405,11 @@ function Profile() {
           </span>
 
           <span>
-            Logout
+            {t("logout")}
           </span>
         </button>
 
       </div>
-
 
       {/* =========================
           MAIN CONTENT
@@ -426,16 +420,14 @@ function Profile() {
         {/* PAGE HEADER */}
 
         <div className="page-title">
-          Nurse Profile
+          {t("nurseProfile")}
         </div>
 
         <div className="page-subtitle">
-          View and update your personal
-          information
+          {t("nurseProfileSubtitle")}
         </div>
 
         <br />
-
 
         {/* =========================
             MESSAGE
@@ -453,7 +445,6 @@ function Profile() {
           </div>
         )}
 
-
         {/* =========================
             PROFILE DISPLAY
         ========================== */}
@@ -463,7 +454,7 @@ function Profile() {
           <div className="card-header">
 
             <div className="card-title">
-              Nurse Profile
+              {t("nurseProfile")}
             </div>
 
             <button
@@ -475,12 +466,11 @@ function Profile() {
               }
             >
               {editing
-                ? "Close"
-                : "Edit Profile"}
+                ? t("close")
+                : t("editProfile")}
             </button>
 
           </div>
-
 
           <div className="card-body">
 
@@ -500,13 +490,13 @@ function Profile() {
             >
 
               <strong>
-                Profile Picture:
+                {t("profilePicture")}:
               </strong>
 
               {avatar ? (
                 <img
                   src={avatar}
-                  alt="Nurse Profile"
+                  alt={t("nurseProfile")}
                   style={{
                     width: "60px",
                     height: "60px",
@@ -543,7 +533,6 @@ function Profile() {
 
             </div>
 
-
             {/* FULL NAME */}
 
             <div
@@ -554,11 +543,10 @@ function Profile() {
               }}
             >
               <strong>
-                Full Name:
+                {t("fullName")}:
               </strong>{" "}
               {fullName}
             </div>
-
 
             {/* EMAIL */}
 
@@ -570,11 +558,10 @@ function Profile() {
               }}
             >
               <strong>
-                Email:
+                {t("email")}:
               </strong>{" "}
               {email}
             </div>
-
 
             {/* ROLE */}
 
@@ -586,12 +573,11 @@ function Profile() {
               }}
             >
               <strong>
-                Role:
+                {t("role")}:
               </strong>{" "}
               {role ||
-                "Nurse"}
+                t("nurse")}
             </div>
-
 
             {/* DEPARTMENT */}
 
@@ -603,12 +589,11 @@ function Profile() {
               }}
             >
               <strong>
-                Department:
+                {t("department")}:
               </strong>{" "}
               {department ||
                 "-"}
             </div>
-
 
             {/* PHONE */}
 
@@ -620,12 +605,11 @@ function Profile() {
               }}
             >
               <strong>
-                Phone:
+                {t("phone")}:
               </strong>{" "}
               {phone ||
                 "-"}
             </div>
-
 
             {/* SCHEDULE */}
 
@@ -637,7 +621,7 @@ function Profile() {
               }}
             >
               <strong>
-                Schedule:
+                {t("schedule")}:
               </strong>{" "}
               {schedule ||
                 "-"}
@@ -646,7 +630,6 @@ function Profile() {
           </div>
 
         </div>
-
 
         {/* =========================
             EDIT FORM
@@ -658,11 +641,10 @@ function Profile() {
             <div className="card-header">
 
               <div className="card-title">
-                Edit Nurse Profile
+                {t("editNurseProfile")}
               </div>
 
             </div>
-
 
             <div className="card-body">
 
@@ -677,7 +659,7 @@ function Profile() {
                 <div className="form-group">
 
                   <label className="form-label">
-                    Profile Picture
+                    {t("profilePicture")}
                   </label>
 
                   <input
@@ -695,12 +677,10 @@ function Profile() {
                         "var(--text-secondary)",
                     }}
                   >
-                    Upload a JPG or PNG
-                    image
+                    {t("uploadJpgPng")}
                   </small>
 
                 </div>
-
 
                 {/* AVATAR PREVIEW */}
 
@@ -715,7 +695,7 @@ function Profile() {
 
                     <img
                       src={avatar}
-                      alt="Profile Preview"
+                      alt={t("profilePreview")}
                       style={{
                         width: "90px",
                         height: "90px",
@@ -731,13 +711,12 @@ function Profile() {
                   </div>
                 )}
 
-
                 {/* FULL NAME */}
 
                 <div className="form-group">
 
                   <label className="form-label">
-                    Full Name
+                    {t("fullName")}
                   </label>
 
                   <input
@@ -756,13 +735,12 @@ function Profile() {
 
                 </div>
 
-
                 {/* EMAIL */}
 
                 <div className="form-group">
 
                   <label className="form-label">
-                    Email
+                    {t("email")}
                   </label>
 
                   <input
@@ -781,13 +759,12 @@ function Profile() {
 
                 </div>
 
-
                 {/* ROLE */}
 
                 <div className="form-group">
 
                   <label className="form-label">
-                    Role
+                    {t("role")}
                   </label>
 
                   <input
@@ -805,13 +782,12 @@ function Profile() {
 
                 </div>
 
-
                 {/* DEPARTMENT */}
 
                 <div className="form-group">
 
                   <label className="form-label">
-                    Department
+                    {t("department")}
                   </label>
 
                   <input
@@ -829,13 +805,12 @@ function Profile() {
 
                 </div>
 
-
                 {/* PHONE */}
 
                 <div className="form-group">
 
                   <label className="form-label">
-                    Phone
+                    {t("phone")}
                   </label>
 
                   <input
@@ -853,13 +828,12 @@ function Profile() {
 
                 </div>
 
-
                 {/* SCHEDULE */}
 
                 <div className="form-group">
 
                   <label className="form-label">
-                    Schedule
+                    {t("schedule")}
                   </label>
 
                   <input
@@ -878,14 +852,13 @@ function Profile() {
 
                 </div>
 
-
                 {/* SAVE */}
 
                 <button
                   type="submit"
                   className="btn btn-success"
                 >
-                  💾 Save Changes
+                  💾 {t("saveChanges")}
                 </button>
 
               </form>
